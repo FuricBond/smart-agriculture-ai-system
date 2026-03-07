@@ -33,6 +33,24 @@ The goal of this project is to bridge the gap between advanced artificial intell
 
 ---
 
+## 🗄️ Datasets
+
+This project uses multiple datasets for training the AI models. If you want to train the models yourself, download the datasets from the links below and extract them into the correct directories:
+
+### Disease Detection
+[PlantVillage Dataset](https://drive.google.com/drive/folders/1hMRYfnG-9OKpa8tB_zbzO9Gw2qUYJ8D2?usp=sharing)  
+Place inside: `disease_model/data/`
+
+### Crop Recommendation
+[Crop Recommendation Dataset](https://drive.google.com/drive/folders/11-Ld88jJMRRGzNd9bw24utOg51v1GLcc?usp=sharing)  
+Place inside: `crop_model/data/`
+
+### Yield Prediction
+[Crop Yield Dataset](https://drive.google.com/drive/folders/1SkMuOc498OXxruQy3_EaJsDZy60JF3th?usp=sharing)  
+Place inside: `yield_model/data/`
+
+---
+
 ## 🏗️ System Architecture
 
 The application is built on a scalable, decoupled microservices architecture:
