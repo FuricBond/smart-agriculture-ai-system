@@ -42,16 +42,19 @@ yield_model/data/
 *.xlsx
 
 # Machine Learning Models
-# Exclude pre-trained models and large checkpoints (> 50MB)
-*.pth
-*.pkl
-*.joblib
+# Exclude the large crop model and globally ignore general extensions
 *.h5
 *.onnx
-models/
-disease_model/models/
-crop_model/models/
-yield_model/models/
+
+# Explicitly ignore the large crop recommendation model
+crop_model/models/improved_crop_model.pkl
+
+# Allow tracking of specific small models
+!disease_model/models/disease_model.pth
+!yield_model/models/yield_model.pkl
+!yield_model/models/area_encoder.pkl
+!yield_model/models/crop_encoder.pkl
+!crop_model/models/label_encoder.pkl
 
 # Specific Debug / Old / Test files
 debug_*.py
