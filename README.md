@@ -60,15 +60,7 @@ The application is built on a scalable, decoupled microservices architecture:
 3. **FastAPI ML Server (`ai_api/`)**: High-performance Python API that serves the trained machine learning models.
 4. **AI Engine (`smart_system/`)**: The core orchestration layer that handles feature engineering, model inference, and rule-based agronomic advisory logic.
 
-```mermaid
-graph LR
-    A[React Dashboard] <-->|REST API| B(Node.js Server)
-    B <-->|HTTP Proxy| C{FastAPI AI API}
-    C --> D[Smart System Engine]
-    D --> E[(Disease Model)]
-    D --> F[(Crop Model)]
-    D --> G[(Yield Model)]
-```
+![System Architecture](docs/assets/system_architecture.jpg)
 
 ---
 
