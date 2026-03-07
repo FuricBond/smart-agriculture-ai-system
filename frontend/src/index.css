@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-100 font-sans overflow-x-hidden;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+  }
+}
+
+@layer components {
+
+  /* 1) Floating Antigravity Cards with depth illusion and glows */
+  .glass-card {
+    @apply relative bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl transition-all duration-500 overflow-hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 40px 60px -15px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 30px rgba(16, 185, 129, 0.15);
+  }
+
+  /* 8) Floating Buttons with Neon Glow */
+  .btn-primary {
+    @apply relative px-8 py-4 bg-gradient-to-r from-brand-500 to-emerald-400 text-white rounded-2xl shadow-lg transition-all duration-300 font-semibold tracking-wide overflow-hidden z-10;
+    box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-primary:not(:disabled):hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 20px 30px -5px rgba(16, 185, 129, 0.5), 0 0 40px rgba(16, 185, 129, 0.6);
+  }
+
+  /* 4) Neon Glow Inputs */
+  .glowing-input {
+    @apply w-full px-5 py-4 rounded-xl border border-white/10 bg-white/5 text-slate-100 placeholder-slate-400 focus:ring-2 focus:ring-brand-400 focus:border-transparent outline-none transition-all shadow-inner backdrop-blur-md;
+  }
+
+  .glowing-input:focus {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* 5) Animated Gradient Background - moving slowly infinite */
+@keyframes gradient-xy {
+
+  0%,
+  100% {
+    background-size: 400% 400%;
+    background-position: left center;
+  }
+
+  25% {
+    background-size: 400% 400%;
+    background-position: right top;
+  }
+
+  50% {
+    background-size: 400% 400%;
+    background-position: right center;
+  }
+
+  75% {
+    background-size: 400% 400%;
+    background-position: left bottom;
+  }
+}
+
+.animate-gradient-xy {
+  animation: gradient-xy 20s ease infinite;
+}
+
+/* 6) Floating Particle System Animations */
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) translateX(0px);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  80% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-100px) translateX(50px);
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(16, 185, 129, 0.5);
+  animation: floatUp linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scrollbar customized for sci-fi look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.6);
+}

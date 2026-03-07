@@ -1,0 +1,59 @@
+# Python Runtime
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Virtual Environments
+venv/
+env/
+.env
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# VS Code / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary & Log Files
+*.tmp
+*.temp
+*.bak
+*.log
+logs/
+reports/
+
+# Data & Datasets
+# Exclude raw and processed data (too large for GitHub)
+data/
+datasets/
+disease_model/data/
+crop_model/data/
+yield_model/data/
+*.csv
+*.xlsx
+
+# Machine Learning Models
+# Exclude pre-trained models and large checkpoints (> 50MB)
+*.pth
+*.pkl
+*.joblib
+*.h5
+*.onnx
+models/
+disease_model/models/
+crop_model/models/
+yield_model/models/
+
+# Specific Debug / Old / Test files
+debug_*.py
+test_*.py
+old_*.py

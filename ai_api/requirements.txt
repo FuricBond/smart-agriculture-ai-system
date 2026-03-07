@@ -1,0 +1,12 @@
+fastapi==0.115.0
+uvicorn==0.30.6
+numpy>=2.0
+pandas>=2.2
+scikit-learn>=1.5
+xgboost>=2.0
+lightgbm>=4.3
+torch>=2.3
+torchvision>=0.18
+joblib>=1.4
+pillow>=10.0
+python-multipart>=0.0.9

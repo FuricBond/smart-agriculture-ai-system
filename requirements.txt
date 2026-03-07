@@ -1,0 +1,14 @@
+streamlit
+torch
+torchvision
+scikit-learn
+pandas
+numpy
+xgboost
+lightgbm
+joblib
+plotly
+pillow
+matplotlib
+opencv-python
+seaborn
