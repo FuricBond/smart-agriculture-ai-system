@@ -9,6 +9,7 @@
     <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
     <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
     <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" alt="PyTorch" />
+    <img src="https://img.shields.io/badge/Gemini_AI-1A73E8?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
   </p>
 </div>
 
@@ -25,9 +26,10 @@ The goal of this project is to bridge the gap between advanced artificial intell
 ## ✨ Features
 
 - 🔍 **AI Disease Detection:** Upload an image of a crop leaf and instantly identify diseases using a fine-tuned EfficientNet deep learning model.
-- 🌱 **Crop Recommendation Engine:** Predicts the most suitable crop for your land based on soil nutrients (Nitrogen, Phosphorus, Potassium), pH levels, and local climatic conditions (Temperature, Humidity, Rainfall).
+- 🌱 **Crop Recommendation Engine:** Predicts the most suitable crop for your land based on soil nutrients (Nitrogen, Phosphorus, Potassium), pH levels, and local climatic conditions.
+- 🧠 **Gemini-Powered Crop Advisory:** Augments the crop recommendation engine with context-aware, generative AI farming advice (e.g., fertilizer split-dosing, biological prevention strategies).
+- 💬 **Conversational Farm AI Assistant:** Direct chatbot interface powered by Google Gemini where farmers can dynamically ask questions about crop health, diseases, fertilizers, and irrigation.
 - 📈 **Yield Forecasting:** Estimates the expected yield density (hg/ha) for a specific crop and area, factoring in historical trends and solar cycles using an XGBoost regression model.
-- 🧠 **Smart Agronomic Advisory:** Generates dynamic, context-aware farming advice (e.g., fertilizer split-dosing, pH correction) based on predictive models.
 - 📱 **Interactive Web Dashboard:** A sleek, futuristic, and highly responsive user interface built with React and Tailwind CSS.
 - 🛡️ **Confidence Guards:** The AI system provides certainty scores and flags low-confidence predictions to ensure safe agricultural decisions.
 
@@ -106,6 +108,7 @@ CropProject/
 ### AI / Machine Learning (API & Engines)
 - **Python 3.10+**
 - **FastAPI** (High-performance API)
+- **Google Generative AI SDK** (Gemini LLM Integration)
 - **PyTorch / Torchvision** (Deep Learning - Computer Vision)
 - **Scikit-Learn** (Machine Learning utilities)
 - **XGBoost & LightGBM** (Gradient Boosting frameworks)

@@ -78,8 +78,10 @@ D:\Project\CropProject\
 │       ├── train_yield_model.py           # Professional training pipeline
 │       └── predict_yield.py               # Inference with validation
 │
-├── advisory_system\                       # (Planned) Rule-based farming advice
-├── dashboard\                             # (Planned) Web interface for farmers
+├── advisory_system\                       # (Deprecated) Replaced by smart_system
+├── ai_api\                                # Python FastAPI server (serving models + Gemini)
+├── backend\                               # Node.js backend proxy server
+├── frontend\                              # React.js interactive web dashboard
 └── documentation\
     └── TECHNICAL_DESCRIPTION.md
 ```
@@ -315,11 +317,15 @@ Predict crop yield for a given geographic area, crop type, and year.
 - [x] Shared feature engineering module
 - [x] Model metadata JSON files
 - [x] Project structure cleaned and organized
+- [x] **Advisory Support System** — Gemini AI-powered generative farming advice
+- [x] **Web Dashboard** — Interactive, modern React UI for farmers
+- [x] **Farm AI Assistant** — Conversational chatbot for agricultural queries
 
 ### 🔲 Remaining
 
-- [ ] **Advisory Support System** — Rule-based farming advice engine
-- [ ] **Web Dashboard** — User-friendly interface for farmers
+- [ ] **Satellite Data Integration** — Real-time NDVI and soil moisture
+- [ ] **Live Weather API** — Auto-fill climatic inputs 
+- [ ] **Mobile App Port** — React Native version
 
 ---
 
