@@ -60,3 +60,9 @@ crop_model/models/improved_crop_model.pkl
 debug_*.py
 test_*.py
 old_*.py
+
+# Root unmanaged files
+*.zip
+err.txt
+models.txt
+fix_paths.py

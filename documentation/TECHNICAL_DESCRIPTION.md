@@ -15,12 +15,12 @@ This project implements a complete AI-based smart agriculture system that assist
 | Crop Recommendation | Ensemble ML | Recommend optimal crops based on soil & weather |
 | Yield Prediction | Regression ML | Predict crop yield for a given region and year |
 
-**Project Root:** `C:\CropProject`
+**Project Root:** `D:\Project\CropProject`
 
 ### 1.1 Directory Structure
 
 ```
-C:\CropProject\
+D:\Project\CropProject\
 ├── disease_model\
 │   ├── data\combined\                     # Combined disease image dataset (115K+ images)
 │   ├── data_prep\                         # Archived data merge/cleaning scripts
@@ -324,4 +324,4 @@ Predict crop yield for a given geographic area, crop type, and year.
 ---
 
 *Document generated for: AI-Based Crop Health and Yield Prediction System*
-*Project Root: `C:\CropProject`*
+*Project Root: `D:\Project\CropProject`*
