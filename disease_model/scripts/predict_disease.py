@@ -21,7 +21,7 @@ from PIL import Image
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-MODEL_DIR = r"C:\CropProject\disease_model\models"
+MODEL_DIR = r"D:\Project\CropProject\disease_model\models"
 MODEL_PATH = os.path.join(MODEL_DIR, "disease_model.pth")
 CLASS_MAP_PATH = os.path.join(MODEL_DIR, "class_names.json")
 
@@ -49,7 +49,7 @@ try:
     print(f"  ✅ Loaded {num_classes} disease classes")
 except FileNotFoundError:
     # Fallback: scan directory structure
-    DATA_DIR = r"C:\CropProject\disease_model\data\combined"
+    DATA_DIR = r"D:\Project\CropProject\disease_model\data\combined"
     if os.path.isdir(DATA_DIR):
         class_names = sorted([
             d for d in os.listdir(DATA_DIR)

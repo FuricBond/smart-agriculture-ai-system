@@ -180,6 +180,21 @@ class YieldEngine:
                 'error': 'Yield model not loaded. Call load() first.'
             }
 
+        # Normalize area and crop (case-insensitive mapping)
+        if area:
+            area_lower = str(area).lower().strip()
+            for known in self.known_areas:
+                if known.lower() == area_lower:
+                    area = known
+                    break
+
+        if crop:
+            crop_lower = str(crop).lower().strip()
+            for known in self.known_crops:
+                if known.lower() == crop_lower:
+                    crop = known
+                    break
+
         try:
             if self._use_encoders:
                 return self._predict_with_encoders(area, crop, year, season)

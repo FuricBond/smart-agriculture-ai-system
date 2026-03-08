@@ -2,7 +2,7 @@ import pandas as pd
 
 # Load FAO dataset
 df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\raw_datasets\yield_global.csv\Production_Crops_Livestock_E_All_Data.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\raw_datasets\yield_global.csv\Production_Crops_Livestock_E_All_Data.csv",
 low_memory=False
 )
 
@@ -26,7 +26,7 @@ df = df.dropna()
 
 # Save cleaned dataset
 df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\yield_global_clean.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\yield_global_clean.csv",
 index=False
 )
 

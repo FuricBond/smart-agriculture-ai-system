@@ -26,6 +26,9 @@ import logging
 import platform
 from datetime import datetime
 from typing import Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── Add project root to sys.path ──────────────────────────────
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -39,6 +42,7 @@ from pydantic import BaseModel, validator
 import uvicorn
 
 from smart_system.recommendations import RecommendationEngine
+from smart_system.farm_ai_assistant import generate_farming_response
 
 # ══════════════════════════════════════════════════════════════
 # PART 6 — LOGGING SYSTEM
@@ -325,6 +329,9 @@ class YieldTrendRequest(BaseModel):
     Area: str
     Crop: str
 
+class FarmAssistantRequest(BaseModel):
+    question: str
+
 
 # ══════════════════════════════════════════════════════════════
 # PART 5 — STRUCTURED ERROR RESPONSE HELPER
@@ -468,6 +475,7 @@ async def predict_crop(request: CropRequest):
                 "recommended_crop": crop_name,
                 "confidence":       round(confidence, 1),
                 "agronomic_advice": advice,
+                "ai_advice":        result.get("ai_advice", "AI advice temporally unavailable."),
                 # C1 — Top-3 alternative crop recommendations
                 "top_recommendations": [
                     {"crop": crop, "confidence": round(conf, 1)}
@@ -525,6 +533,25 @@ async def predict_yield(request: YieldRequest):
         error_response(f"Yield prediction exception: {e}")
 
 
+@app.post("/farm-assistant")
+async def farm_assistant(request: FarmAssistantRequest):
+    log_request("/farm-assistant", request.dict())
+    try:
+        question = request.question
+        answer = generate_farming_response(question)
+        
+        # We don't log the full answer to keep logs clean, but log the query
+        logger.info(f"Farm Assistant Query: '{question}'")
+        
+        return {
+            "status": "success",
+            "question": question,
+            "answer": answer
+        }
+    except Exception as e:
+        error_response(f"Farm assistant exception: {e}")
+
+
 @app.post("/yield-trends")
 async def get_yield_trends(request: YieldTrendRequest):
     log_request("/yield-trends", request.dict())
@@ -538,19 +565,20 @@ async def get_yield_trends(request: YieldTrendRequest):
         ]
         
         if filtered.empty:
-            return {"status": "success", "area": request.Area, "crop": request.Crop, "trends": []}
+            return {"status": "success", "success": True, "area": request.Area, "crop": request.Crop, "trends": []}
             
         filtered = filtered.sort_values(by='Year')
         
         trends = []
         for _, row in filtered.iterrows():
             trends.append({
-                "year": int(row['Year']),
-                "yield": float(row['Yield_kg_per_hectare'])
+                "Year": int(row['Year']),
+                "Yield": float(row['Yield'])
             })
             
         return {
             "status": "success",
+            "success": True,
             "area": request.Area,
             "crop": request.Crop,
             "trends": trends

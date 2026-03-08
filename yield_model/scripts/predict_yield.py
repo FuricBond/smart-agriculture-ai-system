@@ -22,7 +22,7 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-MODEL_DIR = r"C:\CropProject\yield_model\models"
+MODEL_DIR = r"D:\Project\CropProject\yield_model\models"
 MODEL_PATH = os.path.join(MODEL_DIR, "yield_model.pkl")
 AREA_ENC_PATH = os.path.join(MODEL_DIR, "area_encoder.pkl")
 CROP_ENC_PATH = os.path.join(MODEL_DIR, "crop_encoder.pkl")

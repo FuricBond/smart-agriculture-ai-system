@@ -2,10 +2,10 @@ import os
 import shutil
 
 # PlantDoc images folder
-plantdoc = r"C:\CropProject\disease_model\data\archive\images"
+plantdoc = r"D:\Project\CropProject\disease_model\data\archive\images"
 
 # Combined dataset
-combined = r"C:\CropProject\disease_model\data\combined"
+combined = r"D:\Project\CropProject\disease_model\data\combined"
 
 print("Copying PlantDoc images...")
 

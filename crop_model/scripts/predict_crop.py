@@ -26,8 +26,8 @@ from feature_utils import engineer_features, FEATURE_COLUMNS, validate_input
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-MODEL_PATH = r"C:\CropProject\crop_model\models\improved_crop_model.pkl"
-ENCODER_PATH = r"C:\CropProject\crop_model\models\label_encoder.pkl"
+MODEL_PATH = r"D:\Project\CropProject\crop_model\models\improved_crop_model.pkl"
+ENCODER_PATH = r"D:\Project\CropProject\crop_model\models\label_encoder.pkl"
 TOP_K = 5
 
 

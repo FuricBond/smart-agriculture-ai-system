@@ -176,7 +176,24 @@ app.post('/api/yield-trends', async (req, res) => {
 });
 
 
-// ── 5. Smart System Report ─────────────────────────────────
+// ── 5. Farm AI Assistant ───────────────────────────────────
+app.post('/api/farm-assistant', async (req, res) => {
+    log('INFO', `POST /api/farm-assistant — ${JSON.stringify(req.body)}`);
+    try {
+        const response = await axios.post(`${AI_API}/farm-assistant`, req.body, {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: AI_TIMEOUT_MS,
+        });
+
+        res.json(response.data);
+
+    } catch (err) {
+        handleAIError(err, res, '/api/farm-assistant');
+    }
+});
+
+
+// ── 6. Smart System Report ─────────────────────────────────
 app.post('/api/report', upload.single('file'), async (req, res) => {
     log('INFO', 'POST /api/report');
     try {

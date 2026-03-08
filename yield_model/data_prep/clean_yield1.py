@@ -5,19 +5,19 @@ import pandas as pd
 # ==========================
 
 yield_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\yield.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\yield.csv"
 )
 
 rainfall_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\rainfall.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\rainfall.csv"
 )
 
 temp_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\temp.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\temp.csv"
 )
 
 pesticide_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\pesticides.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\raw_datasets\yield1.csv\pesticides.csv"
 )
 
 # ==========================
@@ -56,22 +56,22 @@ pesticide_df.rename(columns={
 # ==========================
 
 yield_df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\yield_clean.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\yield_clean.csv",
 index=False
 )
 
 rainfall_df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\rainfall_clean.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\rainfall_clean.csv",
 index=False
 )
 
 temp_df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\temp_clean.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\temp_clean.csv",
 index=False
 )
 
 pesticide_df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\pesticides_clean.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\pesticides_clean.csv",
 index=False
 )
 

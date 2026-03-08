@@ -29,9 +29,9 @@ import seaborn as sns
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-DATA_DIR = r"C:\CropProject\disease_model\data\combined"
-MODEL_DIR = r"C:\CropProject\disease_model\models"
-REPORT_DIR = r"C:\CropProject\disease_model\reports"
+DATA_DIR = r"D:\Project\CropProject\disease_model\data\combined"
+MODEL_DIR = r"D:\Project\CropProject\disease_model\models"
+REPORT_DIR = r"D:\Project\CropProject\disease_model\reports"
 
 MODEL_PATH = os.path.join(MODEL_DIR, "disease_model.pth")
 CLASS_MAP_PATH = os.path.join(MODEL_DIR, "class_names.json")

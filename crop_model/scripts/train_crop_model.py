@@ -43,9 +43,9 @@ warnings.filterwarnings('ignore', category=UserWarning)
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-DATA_PATH = r"C:\CropProject\crop_model\data\combined\final_crop_dataset.csv"
-MODEL_DIR = r"C:\CropProject\crop_model\models"
-REPORT_DIR = r"C:\CropProject\crop_model\reports"
+DATA_PATH = r"D:\Project\CropProject\crop_model\data\combined\final_crop_dataset.csv"
+MODEL_DIR = r"D:\Project\CropProject\crop_model\models"
+REPORT_DIR = r"D:\Project\CropProject\crop_model\reports"
 
 RANDOM_STATE = 42
 TEST_SIZE = 0.2

@@ -31,9 +31,9 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-DATA_PATH  = r"C:\CropProject\yield_model\data\yield_data\combined\final_master_yield_dataset.csv"
-MODEL_DIR  = r"C:\CropProject\yield_model\models"
-REPORT_DIR = r"C:\CropProject\yield_model\reports"
+DATA_PATH  = r"D:\Project\CropProject\yield_model\data\yield_data\combined\final_master_yield_dataset.csv"
+MODEL_DIR  = r"D:\Project\CropProject\yield_model\models"
+REPORT_DIR = r"D:\Project\CropProject\yield_model\reports"
 
 RANDOM_STATE = 42
 TEST_SIZE    = 0.1

@@ -5,19 +5,19 @@ import pandas as pd
 # ==========================
 
 yield_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\yield_clean.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\yield_clean.csv"
 )
 
 rainfall_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\rainfall_clean.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\rainfall_clean.csv"
 )
 
 temp_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\temp_clean.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\temp_clean.csv"
 )
 
 pesticide_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\pesticides_clean.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\pesticides_clean.csv"
 )
 
 # ==========================
@@ -56,7 +56,7 @@ merged_df = pd.merge(
 # ==========================
 
 merged_df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\combined\yield_dataset1_final.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\combined\yield_dataset1_final.csv",
 index=False
 )
 

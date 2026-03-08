@@ -6,10 +6,10 @@ import pandas as pd
 # PATHS
 # ==========================
 
-cassava = r"C:\CropProject\disease_model\data\cassava-leaf-disease-classification\train_images"
-cassava_csv = r"C:\CropProject\disease_model\data\cassava-leaf-disease-classification\train.csv"
+cassava = r"D:\Project\CropProject\disease_model\data\cassava-leaf-disease-classification\train_images"
+cassava_csv = r"D:\Project\CropProject\disease_model\data\cassava-leaf-disease-classification\train.csv"
 
-combined = r"C:\CropProject\disease_model\data\combined"
+combined = r"D:\Project\CropProject\disease_model\data\combined"
 
 
 # ==========================

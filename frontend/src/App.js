@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Leaf, Activity, Droplets, Map, FileText, Menu, X } from 'lucide-react';
+import { Leaf, Activity, Droplets, Map, FileText, Menu, X, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Home from './pages/Home';
@@ -8,6 +8,7 @@ import Disease from './pages/Disease';
 import Crop from './pages/Crop';
 import Yield from './pages/Yield';
 import Report from './pages/Report';
+import FarmAssistant from './pages/FarmAssistant';
 
 // Floating Particle System Component
 const ParticleBackground = () => {
@@ -52,8 +53,8 @@ const NavItem = ({ icon: Icon, label, path, active, onClick }) => (
     to={path}
     onClick={onClick}
     className={`relative flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 overflow-hidden group ${active
-        ? 'text-brand-300 font-semibold'
-        : 'text-slate-300 hover:text-white'
+      ? 'text-brand-300 font-semibold'
+      : 'text-slate-300 hover:text-white'
       }`}
   >
     {active && (
@@ -78,6 +79,7 @@ const Navbar = () => {
     { icon: Droplets, label: 'Crop Recommendations', path: '/crop' },
     { icon: Map, label: 'Yield Forecast', path: '/yield' },
     { icon: FileText, label: 'Smart System', path: '/report' },
+    { icon: BrainCircuit, label: 'Farm AI Assistant', path: '/farm-assistant' },
   ];
 
   return (
@@ -186,6 +188,7 @@ function App() {
         <Route path="/crop" element={<Crop />} />
         <Route path="/yield" element={<Yield />} />
         <Route path="/report" element={<Report />} />
+        <Route path="/farm-assistant" element={<FarmAssistant />} />
       </Routes>
     </Layout>
   );

@@ -3,15 +3,15 @@ import pandas as pd
 print("Loading cleaned datasets...")
 
 df1 = pd.read_csv(
-r"C:\CropProject\crop_model\cleaned\crop1_clean.csv"
+r"D:\Project\CropProject\crop_model\cleaned\crop1_clean.csv"
 )
 
 df2 = pd.read_csv(
-r"C:\CropProject\crop_model\cleaned\crop2_clean.csv"
+r"D:\Project\CropProject\crop_model\cleaned\crop2_clean.csv"
 )
 
 df3 = pd.read_csv(
-r"C:\CropProject\crop_model\cleaned\crop3_clean.csv"
+r"D:\Project\CropProject\crop_model\cleaned\crop3_clean.csv"
 )
 
 print("Dataset1 rows:", len(df1))
@@ -31,7 +31,7 @@ final_df = pd.concat([
 print("\nSaving final dataset...")
 
 final_df.to_csv(
-r"C:\CropProject\crop_model\data\combined\final_crop_dataset.csv",
+r"D:\Project\CropProject\crop_model\data\combined\final_crop_dataset.csv",
 index=False
 )
 

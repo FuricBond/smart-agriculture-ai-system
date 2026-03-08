@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droplets, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { Droplets, CheckCircle, AlertTriangle, Loader2, Brain } from 'lucide-react';
 
 const Crop = () => {
     const [formData, setFormData] = useState({
@@ -220,6 +220,22 @@ const Crop = () => {
                                             ))}
                                         </ul>
                                     </div>
+                                )}
+
+                                {result.ai_advice && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.6 }}
+                                        className="mt-6 relative z-10 w-full mb-4"
+                                    >
+                                        <h4 className="flex items-center gap-2 text-xs font-bold text-amber-300 uppercase tracking-widest mb-3 border-b border-amber-500/20 pb-2 drop-shadow-[0_0_5px_currentColor]">
+                                            <Brain className="w-4 h-4 text-amber-400" /> AI Farming Advisor
+                                        </h4>
+                                        <div className="text-sm text-amber-100/80 leading-relaxed bg-gradient-to-br from-amber-500/10 to-transparent p-5 rounded-xl border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.05)] whitespace-pre-wrap font-light tracking-wide">
+                                            {result.ai_advice}
+                                        </div>
+                                    </motion.div>
                                 )}
                             </motion.div>
                         )}

@@ -25,6 +25,7 @@ from typing import Dict, List, Optional, Tuple
 
 from . import config
 from . import logger
+from .gemini_advisor import generate_crop_advice
 
 
 def _engineer_features(df) -> 'pd.DataFrame':
@@ -268,12 +269,19 @@ class CropEngine:
 
             confidence = top_predictions[0][1]
 
+            prediction_summary = {
+                'top_crop': crop_name,
+                'alternatives': [opt[0] for opt in top_predictions[1:4]]
+            }
+            ai_advice = generate_crop_advice(input_data, prediction_summary)
+
             result = {
                 'success':         True,
                 'crop_name':       crop_name,
                 'confidence':      confidence,
                 'top_predictions': top_predictions,
                 'input_data':      input_data,
+                'ai_advice':       ai_advice,
             }
 
             logger.log_info(

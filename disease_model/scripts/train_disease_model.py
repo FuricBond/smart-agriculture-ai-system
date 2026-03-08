@@ -31,9 +31,9 @@ from sklearn.metrics import classification_report
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-DATA_DIR = r"C:\CropProject\disease_model\data\combined"
-MODEL_DIR = r"C:\CropProject\disease_model\models"
-REPORT_DIR = r"C:\CropProject\disease_model\reports"
+DATA_DIR = r"D:\Project\CropProject\disease_model\data\combined"
+MODEL_DIR = r"D:\Project\CropProject\disease_model\models"
+REPORT_DIR = r"D:\Project\CropProject\disease_model\reports"
 
 # Hyperparameters
 IMAGE_SIZE = 224

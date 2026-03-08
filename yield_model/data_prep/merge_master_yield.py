@@ -5,11 +5,11 @@ import pandas as pd
 # ==========================
 
 dataset1 = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\combined\yield_dataset1_final.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\combined\yield_dataset1_final.csv"
 )
 
 global_df = pd.read_csv(
-r"C:\CropProject\yield_model\data\yield_data\cleaned\yield_global_clean.csv"
+r"D:\Project\CropProject\yield_model\data\yield_data\cleaned\yield_global_clean.csv"
 )
 
 print("Dataset1 rows:", len(dataset1))
@@ -29,7 +29,7 @@ master_df = pd.concat(
 # ==========================
 
 master_df.to_csv(
-r"C:\CropProject\yield_model\data\yield_data\combined\master_yield_dataset.csv",
+r"D:\Project\CropProject\yield_model\data\yield_data\combined\master_yield_dataset.csv",
 index=False
 )
 

@@ -28,7 +28,7 @@ SYSTEM_AUTHOR = "Smart Agriculture AI Team"
 # PROJECT ROOT
 # ═══════════════════════════════════════════════════════════════
 
-PROJECT_ROOT = r"C:\CropProject"
+PROJECT_ROOT = r"D:\Project\CropProject"
 
 
 # ═══════════════════════════════════════════════════════════════
