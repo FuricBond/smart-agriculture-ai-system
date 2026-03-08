@@ -83,12 +83,12 @@ const Report = () => {
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.5)] border border-fuchsia-400/50"
+                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-[0_0_30px_rgba(76,175,80,0.5)] border border-brand-400/50"
                 >
                     <FileText className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
-                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Core Telemetry Report</h1>
-                <p className="text-slate-400 font-light tracking-widest text-sm uppercase">Generate full AI synthesis analysis.</p>
+                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Farm Intelligence Report</h1>
+                <p className="text-slate-400 font-light tracking-widest text-sm uppercase">Comprehensive crop, soil, and yield analysis.</p>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-10 items-start">
@@ -99,7 +99,7 @@ const Report = () => {
                     transition={{ delay: 0.2 }}
                     className="glass-card p-8 lg:p-10 relative overflow-hidden group w-full"
                 >
-                    <div className="absolute inset-0 bg-fuchsia-500/10 blur-[80px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+                    <div className="absolute inset-0 bg-brand-500/10 blur-[80px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
 
                     <form onSubmit={handlePredict} className="space-y-8 relative z-10">
 
@@ -107,7 +107,7 @@ const Report = () => {
                         <div className="bg-white/5 p-6 rounded-2xl border border-white/10 shadow-inner">
                             <h3 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4 flex items-center gap-3">
                                 <UploadCloud className="w-4 h-4 text-brand-400" />
-                                Optic Sensor Data
+                                Plant Image Data
                             </h3>
                             <div
                                 className="border border-dashed border-white/20 bg-slate-900/50 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:border-brand-500 hover:bg-white/10 transition-colors cursor-pointer shadow-inner"
@@ -121,7 +121,7 @@ const Report = () => {
                                         src={preview} alt="Leaf" className="h-32 object-contain rounded-lg drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
                                     />
                                 ) : (
-                                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest drop-shadow-[0_0_5px_rgba(0,0,0,0.5)]">Load Diagnostic Image Array</p>
+                                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest drop-shadow-[0_0_5px_rgba(0,0,0,0.5)]">Upload Leaf Image</p>
                                 )}
                             </div>
                         </div>
@@ -147,7 +147,7 @@ const Report = () => {
                                     <input
                                         type={f.type} step="any" name={f.name} value={formData[f.name]}
                                         onChange={handleChange} required
-                                        className="glowing-input font-mono text-center tracking-wider focus:ring-fuchsia-400 focus:shadow-[0_0_20px_rgba(168,85,247,0.2)] bg-slate-900/40 py-3"
+                                        className="glowing-input font-mono text-center tracking-wider focus:ring-brand-400 focus:shadow-[0_0_20px_rgba(76,175,80,0.2)] bg-slate-900/40 py-3"
                                     />
                                 </div>
                             ))}
@@ -157,7 +157,7 @@ const Report = () => {
                         <div className="grid grid-cols-2 gap-5 pt-4">
                             <div className="col-span-2">
                                 <h3 className="text-xs font-bold text-slate-400 tracking-widest uppercase border-b border-white/10 pb-3 mb-2 flex items-center gap-2">
-                                    <Map className="w-4 h-4 text-amber-400" /> Spatial Target
+                                    <Map className="w-4 h-4 text-amber-400" /> Location Details
                                 </h3>
                             </div>
                             {['Area', 'Crop', 'Year'].map(f => (
@@ -166,7 +166,7 @@ const Report = () => {
                                     <input
                                         type={f === 'Year' ? 'number' : 'text'} name={f} value={formData[f]}
                                         onChange={handleChange} required
-                                        className="glowing-input font-mono tracking-wider focus:ring-fuchsia-400 focus:shadow-[0_0_20px_rgba(168,85,247,0.2)] bg-slate-900/40 py-3 text-center uppercase"
+                                        className="glowing-input font-mono tracking-wider focus:ring-brand-400 focus:shadow-[0_0_20px_rgba(76,175,80,0.2)] bg-slate-900/40 py-3 text-center uppercase"
                                     />
                                 </div>
                             ))}
@@ -178,10 +178,10 @@ const Report = () => {
                                 whileTap={{ scale: !loading ? 0.98 : 1 }}
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full py-5 bg-gradient-to-r from-fuchsia-600 to-purple-500 text-white rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all duration-300 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 border border-fuchsia-400/50 ${loading && 'opacity-50 cursor-not-allowed shadow-none'}`}
+                                className={`w-full py-5 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-xl shadow-[0_0_20px_rgba(76,175,80,0.4)] hover:shadow-[0_0_40px_rgba(76,175,80,0.6)] transition-all duration-300 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 border border-brand-400/50 ${loading && 'opacity-50 cursor-not-allowed shadow-none'}`}
                             >
                                 {loading ? <Loader2 className="animate-spin w-5 h-5 drop-shadow-[0_0_5px_currentColor]" /> : <FileText className="w-5 h-5 drop-shadow-[0_0_5px_currentColor]" />}
-                                {loading ? 'Synthesizing Data Streams...' : 'Initiate Full Telemetry Report'}
+                                {loading ? 'Analyzing Farm Data...' : 'Generate Intelligence Report'}
                             </motion.button>
                         </div>
                     </form>
@@ -220,7 +220,7 @@ const Report = () => {
                                     <FileText className="w-10 h-10 text-slate-500 drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
                                 </div>
                                 <p className="text-slate-400 font-light tracking-wide max-w-[250px] uppercase text-sm leading-relaxed">
-                                    Connect data uplinks to generate integrated synthesis report.
+                                    Provide farm details and plant image to generate an integrated report.
                                 </p>
                             </motion.div>
                         )}
@@ -232,7 +232,7 @@ const Report = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="glass-card overflow-hidden w-full relative group"
                             >
-                                <div className="absolute inset-0 bg-fuchsia-500/10 blur-[80px] pointer-events-none opacity-50 group-hover:opacity-80 transition-opacity" />
+                                <div className="absolute inset-0 bg-brand-500/10 blur-[80px] pointer-events-none opacity-50 group-hover:opacity-80 transition-opacity" />
 
                                 <div className="bg-slate-900/60 p-8 border-b border-white/5 shadow-inner backdrop-blur-md relative z-10 flex flex-col items-center text-center">
                                     <motion.div
@@ -243,8 +243,8 @@ const Report = () => {
                                     >
                                         <CheckCircle className="w-8 h-8 text-brand-400 drop-shadow-[0_0_5px_currentColor]" />
                                     </motion.div>
-                                    <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 uppercase tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">Synthesis Complete</h3>
-                                    <p className="text-slate-400 text-sm tracking-widest font-bold mt-2 font-mono uppercase text-brand-300 drop-shadow-[0_0_5px_currentColor]">System Link Active</p>
+                                    <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 uppercase tracking-widest drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">Analysis Complete</h3>
+                                    <p className="text-slate-400 text-sm tracking-widest font-bold mt-2 font-mono uppercase text-brand-300 drop-shadow-[0_0_5px_currentColor]">Report Generated</p>
                                 </div>
 
                                 <div className="p-8 space-y-6 relative z-10">
@@ -252,7 +252,7 @@ const Report = () => {
                                     {/* Visual Condition Render */}
                                     <motion.div custom={1} variants={sectionVariants} initial="hidden" animate="visible" className="glass-card !bg-white/5 !rounded-2xl p-6 border !border-white/10 shadow-inner group/card hover:!border-rose-400/50 transition-colors">
                                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-3">
-                                            <span className="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] animate-pulse"></span> Visual Diagnostic Core
+                                            <span className="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] animate-pulse"></span> Disease Detection
                                         </h4>
                                         {result.disease_prediction ? (
                                             result.disease_prediction.error ? (
@@ -274,7 +274,7 @@ const Report = () => {
                                                 </div>
                                             )
                                         ) : (
-                                            <p className="text-slate-500 font-mono text-sm tracking-wide">No optic data uplink established.</p>
+                                            <p className="text-slate-500 font-mono text-sm tracking-wide">No plant image provided.</p>
                                         )}
                                     </motion.div>
 
@@ -282,7 +282,7 @@ const Report = () => {
                                     {result.crop_recommendation && (
                                         <motion.div custom={2} variants={sectionVariants} initial="hidden" animate="visible" className="glass-card !bg-white/5 !rounded-2xl p-6 border !border-white/10 shadow-inner group/card hover:!border-indigo-400/50 transition-colors">
                                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-3">
-                                                <span className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.8)] animate-pulse"></span> Optimal Biosphere Array
+                                                <span className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.8)] animate-pulse"></span> Crop Recommendation
                                             </h4>
                                             {result.crop_recommendation.error ? (
                                                 <p className="text-red-400 tracking-wide font-mono text-sm">{result.crop_recommendation.error}</p>
@@ -292,7 +292,7 @@ const Report = () => {
                                                         <p className="text-2xl font-extrabold text-indigo-300 capitalize mb-1 tracking-wide drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]">
                                                             {result.crop_recommendation.recommended_crop}
                                                         </p>
-                                                        <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest">Primary Vector</p>
+                                                        <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest">Best Crop</p>
                                                     </div>
                                                     {result.crop_recommendation.confidence && (
                                                         <div className="text-right">
@@ -311,7 +311,7 @@ const Report = () => {
                                     {result.yield_prediction && (
                                         <motion.div custom={3} variants={sectionVariants} initial="hidden" animate="visible" className="glass-card !bg-white/5 !rounded-2xl p-6 border !border-white/10 shadow-inner group/card hover:!border-amber-400/50 transition-colors">
                                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-3">
-                                                <span className="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)] animate-pulse"></span> Spatial Densities Target
+                                                <span className="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)] animate-pulse"></span> Yield Forecast
                                             </h4>
                                             {result.yield_prediction.error ? (
                                                 <p className="text-red-400 tracking-wide font-mono text-sm">{result.yield_prediction.error}</p>
@@ -321,7 +321,7 @@ const Report = () => {
                                                         <p className="text-2xl font-extrabold text-amber-400 mb-1 drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]">
                                                             {result.yield_prediction.predicted_yield?.toFixed(2)} <span className="text-lg text-amber-400/70 font-mono tracking-widest">t/ha</span>
                                                         </p>
-                                                        <p className="text-xs text-amber-500 font-bold uppercase tracking-widest">Forecast Plot</p>
+                                                        <p className="text-xs text-amber-500 font-bold uppercase tracking-widest">Estimated Yield</p>
                                                     </div>
                                                     <div className="text-right">
                                                         <p className={`text-xl font-extrabold mb-1 tracking-widest uppercase shadow-sm ${result.yield_prediction.yield_level === 'HIGH' ? 'text-brand-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]' :
@@ -330,7 +330,7 @@ const Report = () => {
                                                             }`}>
                                                             {result.yield_prediction.yield_level}
                                                         </p>
-                                                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Classification</p>
+                                                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Yield Level</p>
                                                     </div>
                                                 </div>
                                             )}

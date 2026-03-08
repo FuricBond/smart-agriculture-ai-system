@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, CheckCircle, AlertTriangle, Loader2, Thermometer, CloudRain, Sun, TrendingUp, Info } from 'lucide-react';
+import { Map, CheckCircle, AlertTriangle, Loader2, Thermometer, CloudRain, Sun, TrendingUp, Info, Wheat } from 'lucide-react';
 import {
     LineChart,
     Line,
@@ -84,10 +84,10 @@ const Yield = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.5)]"
                 >
-                    <TrendingUp className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                    <Wheat className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
-                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 font-display">Yield Intelligence</h1>
-                <p className="text-slate-400 font-light tracking-widest text-sm uppercase italic">Predictive harvest forecasting with climatic analysis.</p>
+                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 font-display">Yield Prediction</h1>
+                <p className="text-slate-400 font-light tracking-widest text-sm uppercase italic">Forecast seasonal yields using spatial and climate data.</p>
             </div>
 
             <div className="grid lg:grid-cols-12 gap-8">
@@ -103,7 +103,7 @@ const Yield = () => {
 
                         <form onSubmit={handlePredict} className="space-y-6 relative z-10">
                             <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <Map className="w-4 h-4" /> Spatial Parameters
+                                <Map className="w-4 h-4" /> Location & Crop
                             </h3>
 
                             <div className="grid grid-cols-1 gap-6">
@@ -136,7 +136,7 @@ const Yield = () => {
                             <div className="pt-4 border-t border-white/5" />
 
                             <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <Sun className="w-4 h-4" /> Climatic Factors
+                                <Sun className="w-4 h-4" /> Climate & Timing
                             </h3>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -195,8 +195,8 @@ const Yield = () => {
                                 disabled={loading}
                                 className={`w-full py-4 mt-6 bg-gradient-to-r from-amber-600 to-orange-500 text-white rounded-xl shadow-[0_10px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_30px_rgba(245,158,11,0.5)] transition-all duration-300 font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 border border-amber-400/30 ${loading && 'opacity-50 cursor-not-allowed'}`}
                             >
-                                {loading ? <Loader2 className="animate-spin w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
-                                {loading ? 'Computing Forecast...' : 'Run Simulation'}
+                                {loading ? <Loader2 className="animate-spin w-4 h-4" /> : <Wheat className="w-4 h-4" />}
+                                {loading ? 'Computing Forecast...' : 'Predict Yield'}
                             </motion.button>
                         </form>
                     </div>
@@ -239,9 +239,9 @@ const Yield = () => {
                                     <div className="flex-1 text-center lg:text-left space-y-4">
                                         <div className="flex items-center justify-center lg:justify-start gap-3 text-amber-500 mb-2">
                                             <CheckCircle className="w-5 h-5" />
-                                            <span className="text-xs font-bold uppercase tracking-[0.2em]">Forecast Ready</span>
+                                            <span className="text-xs font-bold uppercase tracking-[0.2em]">Yield Prediction Ready</span>
                                         </div>
-                                        <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Predicted Yield Density</h2>
+                                        <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Estimated Crop Yield</h2>
                                         <div className="flex items-baseline justify-center lg:justify-start gap-4">
                                             <span className="text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-200 tabular-nums drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                                                 {result.predicted_yield?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
@@ -254,18 +254,18 @@ const Yield = () => {
 
                                     <div className="space-y-6 min-w-[200px]">
                                         <div>
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Yield Assessment</p>
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Yield Level</p>
                                             <span className={`inline-flex px-4 py-2 rounded-lg text-xs font-black tracking-widest uppercase border ${result.yield_level === 'HIGH' ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' :
-                                                    result.yield_level === 'MEDIUM' ? 'bg-amber-500/20 border-amber-500/40 text-amber-400' :
-                                                        'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                                                result.yield_level === 'MEDIUM' ? 'bg-amber-500/20 border-amber-500/40 text-amber-400' :
+                                                    'bg-rose-500/20 border-rose-500/40 text-rose-300'
                                                 }`}>
-                                                {result.yield_level} Density
+                                                {result.yield_level} Level
                                             </span>
                                         </div>
                                         {result.yield_uncertainty && (
                                             <div>
                                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                                    Calibration Variance <Info className="w-3 h-3 cursor-help text-slate-600" />
+                                                    Data Variance <Info className="w-3 h-3 cursor-help text-slate-600" />
                                                 </p>
                                                 <span className="text-xl font-mono text-slate-300">± {result.yield_uncertainty} <span className="text-xs text-slate-500">hg/ha</span></span>
                                             </div>
@@ -275,7 +275,7 @@ const Yield = () => {
 
                                 {result.agronomic_advice && (
                                     <div className="mt-10 pt-8 border-t border-white/5 relative z-10">
-                                        <h4 className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-4">Strategic Advisory</h4>
+                                        <h4 className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-4">Farming Insights</h4>
                                         <div className="grid md:grid-cols-2 gap-4">
                                             {result.agronomic_advice.map((advice, i) => (
                                                 <div key={i} className="flex gap-3 text-sm text-slate-400 bg-white/5 p-4 rounded-xl border border-white/5 hover:border-amber-500/20 transition-colors">
@@ -295,9 +295,9 @@ const Yield = () => {
                                 className="glass-card p-12 flex flex-col items-center justify-center text-center h-[350px] border-dashed !bg-white/2"
                             >
                                 <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center mb-6 shadow-2xl border border-white/5">
-                                    <TrendingUp className="w-10 h-10 text-slate-700" />
+                                    <Wheat className="w-10 h-10 text-slate-700" />
                                 </div>
-                                <p className="text-slate-500 font-light tracking-widest max-w-sm uppercase text-xs">System ready. Enter spatial and climatic vectors to compute harvest forecast.</p>
+                                <p className="text-slate-500 font-light tracking-widest max-w-sm uppercase text-xs">System ready. Enter location and climate details to generate yield forecast.</p>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -311,7 +311,7 @@ const Yield = () => {
                     >
                         <div className="flex items-center justify-between mb-8 relative z-10">
                             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
-                                <TrendingUp className="w-4 h-4 text-amber-500" /> Historical Performance Matrix
+                                <TrendingUp className="w-4 h-4 text-amber-500" /> Historical Yield Trends
                             </h3>
                             <div className="flex gap-4">
                                 <span className="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-tighter">

@@ -18,21 +18,26 @@ def generate_farming_response(user_question: str) -> str:
         model = get_model()
         
         prompt = f"""
-        You are an expert agricultural advisor helping farmers.
+        You are an elite, expert agricultural advisor helping farmers make data-driven decisions.
 
         The farmer asked:
         "{user_question}"
 
-        Provide a clear and practical farming answer.
-        Focus on:
-        - crop health
-        - soil conditions
-        - irrigation
-        - fertilizers
-        - disease prevention
+        Provide a clear, highly practical, and actionable farming answer.
+        
+        CRITICAL FORMATTING RULES:
+        You MUST format your response strictly into these three separate sections using Markdown:
 
-        Keep the response simple and helpful for a farmer to read.
-        Use Markdown formatting (bolding, lists) to make it easy to scan.
+        ### 1. Diagnosis / Assessment
+        (Briefly analyze the farmer's core issue or question based on crop health, soil, or climate context)
+
+        ### 2. Immediate Action Steps
+        (Provide a bulleted list of 2-3 immediate, actionable strategies the farmer must take next, including exact fertilizer/pesticide names or irrigation techniques if applicable)
+
+        ### 3. Preventative Measures
+        (Provide 1-2 long-term agronomic tips to prevent the issue from recurring or to optimize long-term yield)
+        
+        Keep the tone professional, authoritative, yet easy to understand for a farmer.
         """
         
         response = model.generate_content(prompt)

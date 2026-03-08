@@ -273,8 +273,8 @@ Predict crop yield for a given geographic area, crop type, and year.
                     └─────────────────────────────────────────────────┘
 
   ┌─────────────┐        ┌──────────────────┐        ┌──────────────────┐
-  │  Leaf Image  │──────▶│  Disease Model   │──────▶│  Top-5 Diseases   │
-  │  (Camera)    │        │  ResNet50 CNN    │        │  with Confidence  │
+  │  Leaf Image │──────▶│  Disease Model   │──────▶ │  Top-5 Diseases   │
+  │  (Camera)   │        │  ResNet50 CNN    │        │  with Confidence  │
   └─────────────┘        └──────────────────┘        └──────────────────┘
 
   ┌─────────────┐        ┌──────────────────┐        ┌──────────────────┐

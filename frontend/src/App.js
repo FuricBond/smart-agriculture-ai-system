@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Leaf, Activity, Droplets, Map, FileText, Menu, X, BrainCircuit } from 'lucide-react';
+import { Leaf, Sprout, Wheat, FileText, Menu, X, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Home from './pages/Home';
@@ -29,7 +29,7 @@ const ParticleBackground = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-emerald-950 animate-gradient-xy opacity-80" />
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-emerald-950 to-soil-900 animate-gradient-xy opacity-90" />
       {particles.map((p) => (
         <div
           key={p.id}
@@ -60,12 +60,12 @@ const NavItem = ({ icon: Icon, label, path, active, onClick }) => (
     {active && (
       <motion.div
         layoutId="activeNavIndicator"
-        className="absolute inset-0 bg-brand-500/20 rounded-xl border border-brand-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+        className="absolute inset-0 bg-brand-500/20 rounded-xl border border-brand-500/30 shadow-[0_0_15px_rgba(76,175,80,0.3)]"
         initial={false}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       />
     )}
-    <Icon className={`w-5 h-5 relative z-10 ${active ? 'text-brand-400' : 'text-slate-400 group-hover:text-brand-400'} transition-colors duration-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]`} />
+    <Icon className={`w-5 h-5 relative z-10 ${active ? 'text-brand-400' : 'text-slate-400 group-hover:text-brand-400'} transition-colors duration-300 drop-shadow-[0_0_8px_rgba(76,175,80,0.5)]`} />
     <span className="relative z-10 tracking-wide text-sm">{label}</span>
   </Link>
 );
@@ -75,10 +75,10 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const menuItems = [
-    { icon: Activity, label: 'Disease Analysis', path: '/disease' },
-    { icon: Droplets, label: 'Crop Recommendations', path: '/crop' },
-    { icon: Map, label: 'Yield Forecast', path: '/yield' },
-    { icon: FileText, label: 'Smart System', path: '/report' },
+    { icon: Leaf, label: 'Disease Analysis', path: '/disease' },
+    { icon: Sprout, label: 'Crop Recommendations', path: '/crop' },
+    { icon: Wheat, label: 'Yield Forecast', path: '/yield' },
+    { icon: FileText, label: 'Farm Intelligence', path: '/report' },
     { icon: BrainCircuit, label: 'Farm AI Assistant', path: '/farm-assistant' },
   ];
 
@@ -91,7 +91,7 @@ const Navbar = () => {
         className="glass-card !rounded-full px-6 py-3 flex items-center justify-between w-full max-w-6xl !bg-slate-900/60 !border-white/10"
       >
         <Link to="/" className="flex items-center gap-3 mr-8 group relative z-10" onClick={() => setMobileOpen(false)}>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-emerald-600 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] transition-shadow duration-300">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-[0_0_20px_rgba(76,175,80,0.4)] group-hover:shadow-[0_0_30px_rgba(76,175,80,0.6)] transition-shadow duration-300">
             <Leaf className="text-white w-6 h-6 drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]" />
           </div>
           <div className="hidden sm:block">

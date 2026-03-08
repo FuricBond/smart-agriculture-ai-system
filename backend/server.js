@@ -26,8 +26,8 @@ const PORT = 5000;
 // ── Python AI API base URL ─────────────────────────────────
 const AI_API = 'http://localhost:8000';
 
-// ── Timeout for all AI API calls (30 seconds) ─────────────
-const AI_TIMEOUT_MS = 30000;
+// ── Timeout for all AI API calls (120 seconds) ─────────────
+const AI_TIMEOUT_MS = 120000;
 
 // ── Middleware ─────────────────────────────────────────────
 app.use(cors());

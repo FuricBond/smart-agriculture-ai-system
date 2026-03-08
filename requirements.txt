@@ -12,3 +12,5 @@ pillow
 matplotlib
 opencv-python
 seaborn
+python-dotenv
+google-generativeai

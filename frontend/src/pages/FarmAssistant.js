@@ -67,7 +67,7 @@ const FarmAssistant = () => {
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.5)]"
+                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.5)]"
                 >
                     <BrainCircuit className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
@@ -92,18 +92,18 @@ const FarmAssistant = () => {
                                 className={`flex items-start gap-4 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
                             >
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg border ${msg.sender === 'user'
-                                        ? 'bg-indigo-600 border-indigo-400/50'
-                                        : msg.sender === 'error'
-                                            ? 'bg-red-500/20 border-red-500/50 text-red-400'
-                                            : 'bg-amber-500/20 border-amber-500/50 text-amber-400 backdrop-blur-md'
+                                    ? 'bg-brand-600 border-brand-400/50'
+                                    : msg.sender === 'error'
+                                        ? 'bg-red-500/20 border-red-500/50 text-red-400'
+                                        : 'bg-amber-500/20 border-amber-500/50 text-amber-400 backdrop-blur-md'
                                     }`}>
                                     {msg.sender === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
                                 </div>
                                 <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${msg.sender === 'user'
-                                        ? 'bg-indigo-600/80 border border-indigo-500/50 text-white rounded-tr-sm backdrop-blur-sm'
-                                        : msg.sender === 'error'
-                                            ? 'bg-red-950/50 border border-red-500/30 text-red-200 rounded-tl-sm'
-                                            : 'bg-slate-800/60 border border-slate-700/50 text-slate-200 rounded-tl-sm backdrop-blur-md'
+                                    ? 'bg-brand-600/80 border border-brand-500/50 text-white rounded-tr-sm backdrop-blur-sm'
+                                    : msg.sender === 'error'
+                                        ? 'bg-red-950/50 border border-red-500/30 text-red-200 rounded-tl-sm'
+                                        : 'bg-slate-800/60 border border-slate-700/50 text-slate-200 rounded-tl-sm backdrop-blur-md'
                                     }`}>
                                     {msg.sender === 'error' ? (
                                         <p className="text-sm font-medium tracking-wide">{msg.text}</p>

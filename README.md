@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🌱 Smart Agriculture AI System</h1>
+  <h1>🌱 AI-Based Crop Health and Yield Prediction System with Advisory Support for Smart Agriculture</h1>
   <p>An intelligent, ML-powered platform to empower farmers with data-driven agronomic decisions.</p>
 
   <!-- Badges -->
@@ -17,7 +17,7 @@
 
 ## 📖 Project Overview
 
-The **Smart Agriculture AI System** is a full-stack, AI-powered platform designed to optimize agricultural practices and boost crop yields. By leveraging deep learning and machine learning, the system analyzes complex farm data (soil nutrients, weather, plant images) to provide actionable, precision-farming recommendations. 
+The **AI-Based Crop Health and Yield Prediction System with Advisory Support for Smart Agriculture** is a full-stack, AI-powered platform designed to optimize agricultural practices and boost crop yields. By leveraging deep learning and machine learning, the system analyzes complex farm data (soil nutrients, weather, plant images) to provide actionable, precision-farming recommendations. 
 
 The goal of this project is to bridge the gap between advanced artificial intelligence and practical farming, helping farmers reduce crop loss, optimize resource usage, and maximize their harvest potential.
 

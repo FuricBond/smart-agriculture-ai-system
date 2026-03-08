@@ -1,0 +1,107 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+    <meta charset="utf-8">
+    <title>Team Responsibilities</title>
+    <style>
+        body { font-family: 'Calibri', 'Arial', sans-serif; line-height: 1.6; margin: 40px; }
+        h1 { color: #2E7D32; text-align: center; }
+        h2 { color: #1B5E20; border-bottom: 2px solid #4CAF50; padding-bottom: 5px; }
+        h3 { color: #388E3C; margin-top: 25px; }
+        ul { margin-top: 5px; }
+        li { margin-bottom: 5px; }
+        p { margin-bottom: 15px; }
+        .tech { font-weight: bold; color: #D84315; }
+        .integration-list li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>AI-Based Crop Health & Yield Prediction System</h1>
+    <h2>Project Responsibilities Distribution</h2>
+    
+    <h3>TEAM MEMBER 1 &mdash; FRONTEND DEVELOPER</h3>
+    <p><strong>Role Definition:</strong> Responsible for building and maintaining the user-facing web interface, ensuring a seamless, intuitive, and engaging user experience across all digital touchpoints.</p>
+    <p><strong>Tasks Assigned:</strong></p>
+    <ul>
+        <li>Build the React dashboard</li>
+        <li>Design UI for crop recommendation</li>
+        <li>Create disease detection image upload interface</li>
+        <li>Develop yield prediction input forms</li>
+        <li>Implement Farm AI Chat Assistant interface</li>
+        <li>Connect frontend with backend APIs</li>
+        <li>Improve UI/UX design</li>
+    </ul>
+    <p><strong>Technologies:</strong> <span class="tech">React.js, HTML, CSS, JavaScript</span></p>
+
+    <hr>
+
+    <h3>TEAM MEMBER 2 &mdash; BACKEND DEVELOPER</h3>
+    <p><strong>Role Definition:</strong> Responsible for the server-side logic, maintaining the central database, managing APIs, and ensuring smooth communication between the frontend and AI services.</p>
+    <p><strong>Tasks Assigned:</strong></p>
+    <ul>
+        <li>Develop Node.js server</li>
+        <li>Implement API routing</li>
+        <li>Connect React frontend to FastAPI AI services</li>
+        <li>Manage request handling</li>
+        <li>Handle authentication and middleware</li>
+        <li>Maintain backend architecture</li>
+    </ul>
+    <p><strong>Technologies:</strong> <span class="tech">Node.js, Express.js</span></p>
+
+    <hr>
+
+    <h3>TEAM MEMBER 3 &mdash; AI API ENGINEER</h3>
+    <p><strong>Role Definition:</strong> Bridges the gap between machine learning models and backend systems by developing high-performance API endpoints that serve AI predictions securely and safely.</p>
+    <p><strong>Tasks Assigned:</strong></p>
+    <ul>
+        <li>Develop FastAPI endpoints</li>
+        <li>Create API routes: <code>/predict-crop</code>, <code>/predict-disease</code>, <code>/predict-yield</code>, <code>/farm-assistant</code></li>
+        <li>Handle JSON data processing</li>
+        <li>Connect AI models with API services</li>
+        <li>Optimize inference performance</li>
+    </ul>
+    <p><strong>Technologies:</strong> <span class="tech">Python, FastAPI, Uvicorn</span></p>
+
+    <hr>
+
+    <h3>TEAM MEMBER 4 &mdash; MACHINE LEARNING ENGINEER</h3>
+    <p><strong>Role Definition:</strong> Focuses on the data science lifecycle, including data preparation, model training, evaluation, validation, and optimizing models for accurate agricultural predictions.</p>
+    <p><strong>Tasks Assigned:</strong></p>
+    <ul>
+        <li>Train crop recommendation model</li>
+        <li>Train plant disease detection model</li>
+        <li>Train crop yield prediction model</li>
+        <li>Perform data preprocessing</li>
+        <li>Improve model accuracy</li>
+        <li>Manage datasets and model files</li>
+    </ul>
+    <p><strong>Technologies:</strong> <span class="tech">Python, Scikit-learn, TensorFlow/PyTorch, XGBoost, Pandas, NumPy</span></p>
+
+    <hr>
+
+    <h3>TEAM MEMBER 5 &mdash; AI INTEGRATION & SYSTEM ARCHITECT</h3>
+    <p><strong>Role Definition:</strong> Oversees the high-level system architecture, orchestrates the integration of generative AI components, and ensures all modules cohesively operate as a unified smart system.</p>
+    <p><strong>Tasks Assigned:</strong></p>
+    <ul>
+        <li>Integrate Gemini AI into the system</li>
+        <li>Develop the Farm AI Chat Assistant</li>
+        <li>Implement AI advisory system</li>
+        <li>Manage the smart_system orchestration module</li>
+        <li>Design system architecture</li>
+        <li>Handle overall AI pipeline integration</li>
+        <li>Maintain project documentation and deployment</li>
+    </ul>
+    <p><strong>Technologies:</strong> <span class="tech">Python, Google Gemini API, AI system design</span></p>
+
+    <hr>
+
+    <h2>System Module Integration</h2>
+    <p>The entire system incorporates these separate modules seamlessly to perform as a single responsive decision support unit:</p>
+    <ol class="integration-list">
+        <li><strong>User Interaction (Frontend):</strong> The user interacts with the React Dashboard (built by Team Member 1) to upload images for disease detection, input soil data, or chat with the AI assistant.</li>
+        <li><strong>Request Processing (Backend):</strong> The Node.js API server (developed by Team Member 2) receives these frontend requests, handles security checks like authentication, and routes requests intelligently.</li>
+        <li><strong>AI Endpoints (AI API Layer):</strong> When a machine learning requirement is identified, the Node.js server securely forwards the request to the high-speed FastAPI endpoints (created by Team Member 3).</li>
+        <li><strong>Intelligence Generation (ML Models):</strong> FastAPI extracts the incoming data and feeds it to the respective pre-trained machine learning models (trained and optimized by Team Member 4) for precise crop, disease, or yield predictions.</li>
+        <li><strong>Generative Advisory Synthesis (Integration/Architecture Layer):</strong> For complex queries, interactive conversational assistance, and orchestrating the final output, the integration layer utilizes Gemini AI (managed by Team Member 5) to draft actionable farming advice grounded in the model's predictions. The unified response then travels back through the Node.js backend to display formatted content on the React dashboard seamlessly.</li>
+    </ol>
+</body>
+</html>

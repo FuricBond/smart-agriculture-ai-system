@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, CheckCircle, AlertTriangle, Loader2, Activity } from 'lucide-react';
+import { UploadCloud, CheckCircle, AlertTriangle, Loader2, Leaf, Activity } from 'lucide-react';
 
 const Disease = () => {
     const [file, setFile] = useState(null);
@@ -62,12 +62,12 @@ const Disease = () => {
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center shadow-[0_0_30px_rgba(244,63,94,0.5)]"
+                    className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-brand-500 to-emerald-600 flex items-center justify-center shadow-[0_0_30px_rgba(76,175,80,0.5)]"
                 >
-                    <Activity className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                    <Leaf className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
-                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Diagnostics Hub</h1>
-                <p className="text-slate-400 font-light tracking-widest text-sm uppercase">Identify anomalies in realtime.</p>
+                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Plant Health Analysis</h1>
+                <p className="text-slate-400 font-light tracking-widest text-sm uppercase">Identify crop diseases instantly using AI.</p>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-10">
@@ -106,9 +106,9 @@ const Disease = () => {
                                 <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] border border-white/10 group-hover:scale-110 transition-transform">
                                     <UploadCloud className="w-12 h-12 text-slate-300 group-hover:text-brand-400 drop-shadow-[0_0_10px_currentColor] transition-colors" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-2 tracking-wide">Upload Telemetry View</h3>
+                                <h3 className="text-xl font-bold mb-2 tracking-wide">Upload Plant Image</h3>
                                 <p className="text-slate-400 text-sm max-w-[250px] font-light">
-                                    Drag and drop visual data mapping, or click to initialize link.
+                                    Drag and drop leaf image, or click to browse files.
                                 </p>
                             </>
                         )}
@@ -119,10 +119,10 @@ const Disease = () => {
                         whileTap={{ scale: file && !loading ? 0.98 : 1 }}
                         disabled={!file || loading}
                         onClick={handleAnalyze}
-                        className={`btn-primary w-full flex items-center justify-center gap-3 uppercase tracking-widest text-sm ${(!file || loading) && 'opacity-50 cursor-not-allowed shadow-none'}`}
+                        className={`btn-primary w-full flex items-center justify-center gap-3 uppercase tracking-widest text-sm ${(!file || loading) && 'opacity-50 cursor-not-allowed shadow-none border-t border-white/5'}`}
                     >
                         {loading ? <Loader2 className="animate-spin w-5 h-5 drop-shadow-[0_0_5px_currentColor]" /> : <Activity className="w-5 h-5 drop-shadow-[0_0_5px_currentColor]" />}
-                        {loading ? 'Processing Array...' : 'Run Diagnostics'}
+                        {loading ? 'Analyzing Image...' : 'Analyze Plant Health'}
                     </motion.button>
                 </motion.div>
 
@@ -156,9 +156,9 @@ const Disease = () => {
                                 className="glass-card p-10 flex flex-col items-center justify-center text-center h-[400px] border-dashed !bg-white/5"
                             >
                                 <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] border border-white/10">
-                                    <Activity className="w-10 h-10 text-slate-500 drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
+                                    <Leaf className="w-10 h-10 text-slate-500 drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
                                 </div>
-                                <p className="text-slate-400 font-light tracking-wide max-w-[200px]">Awaiting telemetry link to process model data.</p>
+                                <p className="text-slate-400 font-light tracking-wide max-w-[200px]">Awaiting plant image to process health data.</p>
                             </motion.div>
                         )}
 
