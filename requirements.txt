@@ -14,3 +14,4 @@ opencv-python
 seaborn
 python-dotenv
 google-generativeai
+pip install git+https://github.com/openai/CLIP.git

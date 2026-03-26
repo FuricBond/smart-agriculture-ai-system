@@ -93,6 +93,7 @@ def log_prediction(model: str, result: str):
 disease_engine = None
 crop_engine    = None
 yield_engine   = None
+plant_doctor_pipeline = None
 
 _disease_loaded = False
 _crop_loaded    = False
@@ -154,9 +155,26 @@ def startup():
     except Exception as e:
         log_error(f"Failed to load Yield Trends: {e}")
 
+    # ── Initialize Plant Doctor Pipeline ────────────────────
+    global plant_doctor_pipeline
+    if disease_status and disease_engine is not None:
+        try:
+            from smart_system.plant_doctor import PlantDoctorPipeline
+            plant_doctor_pipeline = PlantDoctorPipeline(
+                disease_engine=disease_engine,
+                output_dir=os.path.join(PROJECT_ROOT, "tmp", "plant_doctor_output"),
+                enable_gradcam=True,
+                enable_similarity=True,
+                unknown_threshold=60.0,
+            )
+            log_info("Plant Doctor Pipeline initialized ✓")
+        except Exception as e:
+            log_error(f"Plant Doctor Pipeline init failed: {e}")
+
     disease_icon = "✓" if disease_status else "⚠️  MISSING"
     crop_icon    = "✓" if crop_status    else "⚠️  MISSING"
     yield_icon   = "✓" if yield_status   else "⚠️  MISSING"
+    doctor_icon  = "✓" if plant_doctor_pipeline else "⚠️  MISSING"
 
     banner = f"""
 ================================
@@ -169,13 +187,14 @@ def startup():
   Started : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 --------------------------------
   Models Status:
-    Disease Model  {disease_icon}
-    Crop Model     {crop_icon}
-    Yield Model    {yield_icon}
+    Disease Model    {disease_icon}
+    Crop Model       {crop_icon}
+    Yield Model      {yield_icon}
+    Plant Doctor AI  {doctor_icon}
 ================================
 """
     print(banner)
-    log_info(f"Server started | disease={disease_status} | crop={crop_status} | yield={yield_status}")
+    log_info(f"Server started | disease={disease_status} | crop={crop_status} | yield={yield_status} | plant_doctor={'OK' if plant_doctor_pipeline else 'FAIL'}")
 
 
 def _safe_import_version(pkg: str) -> str:
@@ -550,6 +569,61 @@ async def farm_assistant(request: FarmAssistantRequest):
         }
     except Exception as e:
         error_response(f"Farm assistant exception: {e}")
+
+
+# ══════════════════════════════════════════════════════════════
+# PLANT DOCTOR — AI DIAGNOSIS PIPELINE
+# ══════════════════════════════════════════════════════════════
+
+@app.post("/plant-doctor")
+async def plant_doctor_diagnose(file: UploadFile = File(...)):
+    """Full AI Plant Doctor diagnosis with explainability."""
+    log_request("/plant-doctor", {"filename": file.filename})
+    try:
+        if plant_doctor_pipeline is None:
+            error_response("Plant Doctor pipeline is not loaded", 503)
+
+        # Validate image extension
+        ext = os.path.splitext(file.filename or "")[1].lower()
+        if ext not in VALID_IMAGE_EXTENSIONS:
+            raise HTTPException(
+                status_code=400,
+                detail={"status": "error", "message": "Invalid image file. Supported: jpg, jpeg, png, bmp, tiff, webp"}
+            )
+
+        # Save temp file
+        temp_dir = os.path.join(PROJECT_ROOT, "tmp")
+        os.makedirs(temp_dir, exist_ok=True)
+        safe_name = f"doctor_{datetime.now().strftime('%H%M%S%f')}{ext}"
+        file_path = os.path.join(temp_dir, safe_name)
+
+        try:
+            with open(file_path, "wb") as buf:
+                shutil.copyfileobj(file.file, buf)
+
+            # Run the full diagnostic pipeline
+            result = plant_doctor_pipeline.diagnose(file_path)
+
+            log_prediction("PLANT_DOCTOR",
+                f"{result['plant']} — {result['disease']} "
+                f"({result['confidence']:.1f}%) "
+                f"[{result['status']}] "
+                f"Severity: {result['severity']['level']}"
+            )
+
+            return {
+                "status": "success",
+                **result,
+            }
+
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_response(f"Plant Doctor exception: {e}")
 
 
 @app.post("/yield-trends")

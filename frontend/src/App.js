@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Leaf, Sprout, Wheat, FileText, Menu, X, BrainCircuit } from 'lucide-react';
+import { Leaf, Sprout, Wheat, FileText, Menu, X, BrainCircuit, Microscope } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Home from './pages/Home';
@@ -75,7 +75,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const menuItems = [
-    { icon: Leaf, label: 'Disease Analysis', path: '/disease' },
+    { icon: Microscope, label: 'Disease Analysis', path: '/disease' },
     { icon: Sprout, label: 'Crop Recommendations', path: '/crop' },
     { icon: Wheat, label: 'Yield Forecast', path: '/yield' },
     { icon: FileText, label: 'Farm Intelligence', path: '/report' },
