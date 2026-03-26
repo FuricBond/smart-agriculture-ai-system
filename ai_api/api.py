@@ -38,6 +38,7 @@ if PROJECT_ROOT not in sys.path:
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, validator
 import uvicorn
 
@@ -118,6 +119,29 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Part 3.5: Serve Heatmap Outputs to Frontend ──────────────
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "tmp", "plant_doctor_output")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
+
+def cleanup_outputs(max_files: int = 20):
+    """Keep only the latest N images in the output directory."""
+    try:
+        files = [os.path.join(OUTPUT_DIR, f) for f in os.listdir(OUTPUT_DIR) if f.endswith('.jpg')]
+        if len(files) <= max_files:
+            return
+        # Sort by modification time
+        files.sort(key=os.path.getmtime)
+        # Delete oldest
+        for f in files[:-max_files]:
+            try:
+                os.remove(f)
+            except Exception:
+                pass
+        log_info(f"Cleaned up {len(files) - max_files} old heatmap images.")
+    except Exception as e:
+        log_error(f"Cleanup failed: {e}")
 
 
 # ══════════════════════════════════════════════════════════════
@@ -576,7 +600,7 @@ async def farm_assistant(request: FarmAssistantRequest):
 # ══════════════════════════════════════════════════════════════
 
 @app.post("/plant-doctor")
-async def plant_doctor_diagnose(file: UploadFile = File(...)):
+async def plant_doctor_diagnose(request: Request, file: UploadFile = File(...)):
     """Full AI Plant Doctor diagnosis with explainability."""
     log_request("/plant-doctor", {"filename": file.filename})
     try:
@@ -603,6 +627,18 @@ async def plant_doctor_diagnose(file: UploadFile = File(...)):
 
             # Run the full diagnostic pipeline
             result = plant_doctor_pipeline.diagnose(file_path)
+
+            # ── Construct Visual Output URL (Improvement #4) ─────
+            # Return a full URL instead of a local file path
+            if result.get("heatmap_path"):
+                base_url = str(request.base_url).rstrip("/")
+                filename = os.path.basename(result["heatmap_path"])
+                result["visual_output"] = f"{base_url}/outputs/{filename}"
+                
+                # Dynamic cleanup (Improvement #7)
+                cleanup_outputs(max_files=20)
+            else:
+                result["visual_output"] = ""
 
             log_prediction("PLANT_DOCTOR",
                 f"{result['plant']} — {result['disease']} "

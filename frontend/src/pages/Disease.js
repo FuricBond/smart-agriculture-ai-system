@@ -357,22 +357,25 @@ const Disease = () => {
                                     className="relative w-full h-full"
                                 >
                                     <img
-                                        src={preview}
-                                        alt="Plant leaf"
-                                        className="w-full h-full object-contain"
+                                        src={imageView === 'overlay' && result?.visual_output 
+                                            ? `${result.visual_output}?t=${Date.now()}` 
+                                            : preview}
+                                        alt="Plant leaf analysis"
+                                        className="w-full h-full object-contain transition-opacity duration-500"
                                         style={{ minHeight: '350px', maxHeight: '450px' }}
                                     />
 
-                                    {/* Heatmap overlay simulation when "overlay" view */}
+                                    {/* Heatmap Info Overlay */}
                                     {imageView === 'overlay' && result && (
-                                        <div className="absolute inset-0 pointer-events-none">
-                                            <div className="absolute inset-0 bg-gradient-to-t from-red-500/30 via-yellow-500/15 to-transparent mix-blend-multiply" />
-                                            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-orange-400/10 to-red-500/20 mix-blend-screen" />
-                                            <div className="absolute bottom-0 left-0 right-0 p-3">
-                                                <div className="bg-black/60 backdrop-blur-sm rounded-xl px-4 py-2 text-xs text-slate-300 flex items-center gap-2">
-                                                    <ThermometerSun className="w-4 h-4 text-amber-400" />
-                                                    Infection Probability: {severity.percentage?.toFixed(1) || 0}%
+                                        <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
+                                            <div className="bg-black/60 backdrop-blur-sm rounded-xl px-4 py-2 text-xs text-slate-300 flex items-center justify-between border border-white/10 shadow-lg">
+                                                <div className="flex items-center gap-2">
+                                                    <ThermometerSun className="w-4 h-4 text-brand-400" />
+                                                    <span className="font-semibold tracking-wide capitalize">Grad-CAM++ Analysis</span>
                                                 </div>
+                                                <span className="text-brand-300 font-bold">
+                                                    Infection Intensity: {severity.percentage?.toFixed(1) || 0}%
+                                                </span>
                                             </div>
                                         </div>
                                     )}
