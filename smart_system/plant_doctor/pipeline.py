@@ -109,6 +109,17 @@ class PlantDoctorPipeline:
         except Exception as e:
             logger.warning(f"CLIP init failed: {e}")
 
+        # -- PlantNet API --
+        self._plantnet = None
+        try:
+            from .plantnet_api import PlantNetAPI
+            # Fetch API key from env or use a default one
+            api_key = os.getenv("PLANTNET_API_KEY")
+            self._plantnet = PlantNetAPI(api_key=api_key)
+            logger.info("PlantNet API integration loaded")
+        except Exception as e:
+            logger.warning(f"PlantNet init failed: {e}")
+
         # -- Conditional modules (require model internals) --
         self._gradcam = None
         self._feature_extractor = None
@@ -259,6 +270,28 @@ class PlantDoctorPipeline:
         result["confidence"] = calibrated_confidence
 
         # ==============================================================
+        # STAGE 4.5: PlantNet Identification
+        # ==============================================================
+        if self._plantnet is not None:
+            logger.info("Stage 4.5/13: PlantNet Identification")
+            pn_res = self._plantnet.identify_plant(image_path)
+            
+            if pn_res.get("plant_name") and pn_res.get("plant_name") not in ("Unknown", "Error"):
+                pn_conf = pn_res.get("confidence", 0.0)
+                
+                # Only override if PlantNet is confident enough (> 50%)
+                if pn_conf > 50.0 and pn_res["plant_name"] != "Unknown":
+                    result["plant"] = pn_res["plant_name"]
+                    logger.info(f"PlantNet identified plant: {result['plant']} ({pn_conf}%) - Overriding CNN")
+                else:
+                    logger.info(f"PlantNet confidence ({pn_conf}%) too low. Falling back to CNN plant label: {result['plant']}")
+                
+                # Keep the response in info regardless of confidence, for reference
+                result["plantnet_info"] = pn_res
+            elif pn_res.get("error"):
+                logger.warning(f"PlantNet error: {pn_res['error']}")
+
+        # ==============================================================
         # STAGE 5: Open-World Detection
         # ==============================================================
         logger.info("Stage 5/13: Open-World Detection")
@@ -311,13 +344,19 @@ class PlantDoctorPipeline:
         # ==============================================================
         logger.info("Stage 6/13: Multi-Label Top-K Output")
         result["top_predictions"] = []
+        
+        # Determine if we should universally override the plant name in the list
+        pn_overrode = ("plantnet_info" in result) and (result["plantnet_info"].get("confidence", 0.0) > 50.0)
+        
         for name, conf in calibrated_preds:
             parsed_pred = self.label_parser.parse(name)
             desc = self.display_formatter.get_disease_description(
                 parsed_pred["disease"]
             )
+            # Use the global PlantNet override if available and > 50%, else use CNN's parsed prediction
+            display_plant = result["plant"] if pn_overrode else parsed_pred["plant"]
             result["top_predictions"].append({
-                "name": f"{parsed_pred['plant']} - {parsed_pred['disease']}",
+                "name": f"{display_plant} - {parsed_pred['disease']}",
                 "raw_label": name,
                 "confidence": round(conf, 1),
                 "description": desc,
@@ -338,6 +377,55 @@ class PlantDoctorPipeline:
 
                 class_idx = self.disease_engine.class_names.index(raw_label)
                 heatmap = self._gradcam.generate(img_tensor, class_idx)
+
+                # ==============================================================
+                # SAM INTEGRATION: Combine SAM (segmentation) + Grad-CAM (attention)
+                # ==============================================================
+                try:
+                    import cv2
+                    from .sam_model import SAMModel
+
+                    if getattr(self, "_sam_model", None) is None:
+                        logger.info("Initializing SAM Model...")
+                        self._sam_model = SAMModel()
+
+                    logger.info("Extracting top disease hotspots for SAM segmentation...")
+                    
+                    # Find top 5 highest activation pixels to guide SAM to multiple disease spots
+                    flat_indices = np.argsort(heatmap.flatten())[-5:]
+                    y_coords, x_coords = np.unravel_index(flat_indices, heatmap.shape)
+                    
+                    with Image.open(image_path) as orig_img:
+                        orig_w, orig_h = orig_img.size
+                        
+                    points, labels = [], []
+                    for y_idx, x_idx in zip(y_coords, x_coords):
+                        if heatmap[y_idx, x_idx] > 0.0:  # Must be an activated region
+                            px = int((x_idx / 224.0) * orig_w)
+                            py = int((y_idx / 224.0) * orig_h)
+                            points.append([px, py])
+                            labels.append(1)
+                            
+                    if not points: # Fallback to center if strangely no activation
+                        points, labels = [[orig_w // 2, orig_h // 2]], [1]
+                        
+                    sam_point, sam_label = np.array(points), np.array(labels)
+                    sam_mask = self._sam_model.get_mask(image_path, input_point=sam_point, input_label=sam_label)
+                    
+                    # Resize SAM mask to flexibly match Grad-CAM dimensions
+                    sam_mask_resized = cv2.resize(
+                        sam_mask, 
+                        (heatmap.shape[1], heatmap.shape[0]), 
+                        interpolation=cv2.INTER_NEAREST
+                    )
+                    
+                    # Generate a solid golden-yellow polygon mask (0.75 strength in Colormap HOT = golden orange)
+                    # This abandons fuzzy blobs and produces a crisp, exact disease segmentation
+                    heatmap = sam_mask_resized * 0.75
+                    
+                except Exception as sam_err:
+                    logger.warning(f"SAM Integration skipped/failed: {sam_err}")
+                # ==============================================================
 
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 overlay_name = f"gradcam_{timestamp}.jpg"

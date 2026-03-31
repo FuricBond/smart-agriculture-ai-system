@@ -87,21 +87,21 @@ class GradCAMGenerator:
         arch = self.architecture.lower()
 
         if "efficientnet" in arch:
-            # EfficientNet-B0: features[-3] is a deep-but-not-final MBConv block.
-            # It has richer spatial resolution than the last block.
+            # EfficientNet-B0: features[-1] is the final convolutional layer.
+            # Captures semantic regions and reduces background noise.
             try:
-                return self.model.features[-3]
+                return self.model.features[-1]
             except (AttributeError, IndexError):
-                logger.warning("EfficientNet features[-3] not found, falling back to features[-1]")
+                logger.warning("EfficientNet features[-1] not found")
                 return self.model.features[-1]
 
         elif "resnet" in arch:
-            # ResNet50: layer4[0] keeps the first residual unit of the last stage,
-            # retaining more spatial information than the final unit.
+            # ResNet50: layer4[-1] keeps the final block.
+            # Better semantic isolation.
             try:
-                return self.model.layer4[0]
+                return self.model.layer4[-1]
             except (AttributeError, IndexError):
-                logger.warning("ResNet layer4[0] not found, falling back to layer4[-1]")
+                logger.warning("ResNet layer4[-1] not found")
                 return self.model.layer4[-1]
 
         else:
@@ -169,6 +169,7 @@ class GradCAMGenerator:
 
         if class_idx is None:
             class_idx = output.argmax(dim=1).item()
+            logger.info(f"Grad-CAM++ targeting correctly predicted class_idx: {class_idx}")
 
         self.model.zero_grad()
 
@@ -232,16 +233,17 @@ class GradCAMGenerator:
         # ── Dynamic thresholding (Improvement #3) ─────────────
         #
         # Zeros out low-importance background noise.
-        # The 60th percentile is chosen empirically: it keeps the top 40%
-        # of activations (disease hotspots) while discarding diffuse haze.
+        # Increased aggressiveness (75th percentile) ensures only core
+        # disease regions are highlighted.
         #
-        threshold = np.percentile(cam, 60)
+        threshold = np.percentile(cam, 75)
         cam = np.where(cam > threshold, cam, 0.0).astype(np.float32)
 
-        # Re-normalize after thresholding so full dynamic range is used
+        # ── Ensure proper normalization ───────────────────────
+        cam = np.maximum(cam, 0)
         cam_max = cam.max()
         if cam_max > 1e-8:
-            cam = cam / cam_max
+            cam = cam / (cam_max + 1e-8)
 
         return cam.astype(np.float32)
 
@@ -301,31 +303,25 @@ class GradCAMGenerator:
         )
         heatmap_sharp = np.clip(heatmap_sharp, 0.0, 1.0).astype(np.float32)
 
-        # ── Convert to JET colormap ───────────────────────────
+        # ── Convert to HOT colormap ───────────────────────────
+        # Uses COLORMAP_HOT for focused red/yellow areas and less blue noise
         heatmap_color = cv2.applyColorMap(
             np.uint8(255 * heatmap_sharp),
-            cv2.COLORMAP_JET,
+            cv2.COLORMAP_HOT,
         )
 
-        # ── Improvement #5: High-contrast blending ────────────
-        #
-        # Sum of weights intentionally > 1 (1.25) to boost saturation
-        # so disease regions stand out clearly against the leaf.
-        overlay = cv2.addWeighted(original, 0.65, heatmap_color, 0.60, 0)
-
-        # ── Optional edge-enhancement pass ────────────────────
-        #
-        # Canny edges on the original image drawn in white provide
-        # a subtle structural anchor that helps the viewer identify
-        # exact disease boundaries.
-        try:
-            gray  = cv2.cvtColor(original, cv2.COLOR_BGR2GRAY)
-            edges = cv2.Canny(gray, 80, 160)
-            edges_colored = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
-            overlay = cv2.addWeighted(overlay, 0.92, edges_colored, 0.08, 0)
-        except Exception as edge_err:
-            # Edge pass is optional — never let it break the pipeline
-            logger.debug(f"Edge enhancement skipped: {edge_err}")
+        # ── Professional Overlay Blending ─────────────────────
+        # We use the heatmap intensity as an alpha mask.
+        # This keeps the background leaf completely natural (just gently dimmed)
+        # while only the core disease hotspots are vividly colored.
+        alpha_mask = heatmap_sharp[..., np.newaxis]
+        
+        # Dim the original image slightly to make the heatmap visually pop
+        dimmed_original = (original.astype(np.float32) * 0.70)
+        
+        # Blend: original image * (1 - alpha) + heatmap_color * alpha
+        overlay_float = (dimmed_original * (1.0 - alpha_mask) + heatmap_color.astype(np.float32) * alpha_mask)
+        overlay = np.clip(overlay_float, 0, 255).astype(np.uint8)
 
         # ── Save ──────────────────────────────────────────────
         os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
