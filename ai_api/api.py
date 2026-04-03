@@ -95,6 +95,7 @@ disease_engine = None
 crop_engine    = None
 yield_engine   = None
 plant_doctor_pipeline = None
+yield_pipeline = None          # Phase-1 Yield Prediction Pipeline
 
 _disease_loaded = False
 _crop_loaded    = False
@@ -150,7 +151,7 @@ def cleanup_outputs(max_files: int = 20):
 
 @app.on_event("startup")
 def startup():
-    global disease_engine, crop_engine, yield_engine
+    global disease_engine, crop_engine, yield_engine, yield_pipeline
     global _disease_loaded, _crop_loaded, _yield_loaded
 
     # ── Version probing ───────────────────────────────────────
@@ -194,6 +195,20 @@ def startup():
             log_info("Plant Doctor Pipeline initialized ✓")
         except Exception as e:
             log_error(f"Plant Doctor Pipeline init failed: {e}")
+
+    # ── Initialize Phase-1 Yield Prediction Pipeline ──────────
+    if yield_status and yield_engine is not None and yield_engine._use_encoders:
+        try:
+            from smart_system.yield_predictor.pipeline import YieldPipeline
+            yield_pipeline = YieldPipeline()
+            yield_pipeline.load(
+                model         = yield_engine.model,
+                area_encoder  = yield_engine.area_encoder,
+                crop_encoder  = yield_engine.crop_encoder,
+            )
+            log_info("Yield Prediction Pipeline (Phase-1) initialized ✓")
+        except Exception as e:
+            log_error(f"Yield Pipeline init failed: {e}")
 
     disease_icon = "✓" if disease_status else "⚠️  MISSING"
     crop_icon    = "✓" if crop_status    else "⚠️  MISSING"
@@ -574,6 +589,124 @@ async def predict_yield(request: YieldRequest):
         raise
     except Exception as e:
         error_response(f"Yield prediction exception: {e}")
+
+
+# ══════════════════════════════════════════════════════════════
+# PHASE 1 — NEW YIELD PREDICTION PIPELINE
+# ══════════════════════════════════════════════════════════════
+
+@app.post("/predict-yield-v2")
+async def predict_yield_v2(payload: dict):
+    """
+    Phase-1 Yield Prediction Pipeline.
+
+    Input  : { "crop": str, "state": str, "season": str, "year": int }
+    Output : predicted_yield (hg/ha), yield_level, weather data used
+    """
+    from smart_system.yield_predictor.schema import YieldInput
+    from pydantic import ValidationError
+
+    log_request("/predict-yield-v2", payload)
+
+    # Validate input with Pydantic
+    try:
+        yield_input = YieldInput(**payload)
+    except ValidationError as ve:
+        raise HTTPException(
+            status_code=422,
+            detail={"status": "error", "message": ve.errors()}
+        )
+
+    if yield_pipeline is None:
+        error_response("Yield Prediction Pipeline is not loaded", 503)
+
+    try:
+        result = yield_pipeline.predict(yield_input)
+
+        if result.get("success"):
+            log_prediction(
+                "YIELD-V2",
+                f"{result['area']} | {result['crop']} | {result['year']} "
+                f"→ {result['predicted_yield']:,.2f} hg/ha ({result['yield_level']})"
+            )
+            return {"status": "success", **result}
+        else:
+            detail_msg = result.get("error", "Yield prediction failed")
+            suggestions = result.get("suggestions")
+            if suggestions:
+                detail_msg += f" — Did you mean: {suggestions[:5]}"
+            raise HTTPException(
+                status_code=400,
+                detail={"status": "error", "message": detail_msg}
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_response(f"Yield-v2 prediction exception: {e}")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PHASE 2 — INTELLIGENCE LAYER ENDPOINT
+# ══════════════════════════════════════════════════════════════════════════════
+
+@app.post("/predict-yield-v2/full")
+async def predict_yield_full(payload: dict):
+    """
+    Phase-2 Yield Prediction + Intelligence Pipeline.
+
+    Runs Phase-1 (prediction) and augments the result with:
+      - explanation  : WHY the model predicted this yield
+      - recommendations : fertilizer, irrigation, pest watch, best practices
+      - risk         : overall risk score + factor breakdown + mitigations
+
+    Input  : { "crop": str, "state": str, "season": str, "year": int }
+    Output : Phase-1 result + 'intelligence' block (structured JSON)
+    """
+    from smart_system.yield_predictor.schema import YieldInput
+    from pydantic import ValidationError
+
+    log_request("/predict-yield-v2/full", payload)
+
+    # Validate input
+    try:
+        yield_input = YieldInput(**payload)
+    except ValidationError as ve:
+        raise HTTPException(
+            status_code=422,
+            detail={"status": "error", "message": ve.errors()}
+        )
+
+    if yield_pipeline is None:
+        error_response("Yield Prediction Pipeline is not loaded", 503)
+
+    try:
+        result = yield_pipeline.predict_full(yield_input)
+
+        if result.get("success"):
+            intel   = result.get("intelligence", {})
+            risk    = intel.get("risk", {})
+            log_prediction(
+                "YIELD-FULL",
+                f"{result['area']} | {result['crop']} | {result['year']} "
+                f"→ {result['predicted_yield']:,.2f} hg/ha "
+                f"({result['yield_level']}) | Risk: {risk.get('overall_risk', '?')}"
+            )
+            return {"status": "success", **result}
+        else:
+            detail_msg  = result.get("error", "Yield prediction failed")
+            suggestions = result.get("suggestions")
+            if suggestions:
+                detail_msg += f" — Did you mean: {suggestions[:5]}"
+            raise HTTPException(
+                status_code=400,
+                detail={"status": "error", "message": detail_msg}
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_response(f"Yield-full prediction exception: {e}")
 
 
 @app.post("/farm-assistant")

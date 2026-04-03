@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
     UploadCloud, Leaf, Activity, Loader2, AlertTriangle, CheckCircle,
     ShieldCheck, ShieldAlert, ShieldX, Info, Beaker, Bug,
@@ -175,6 +176,7 @@ const TopPredictions = ({ predictions = [] }) => (
    MAIN COMPONENT: Disease Analysis Page
    ═══════════════════════════════════════════════════ */
 const Disease = () => {
+    const { t } = useTranslation();
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -258,10 +260,10 @@ const Disease = () => {
                     <Microscope className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
                 <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
-                    AI Plant Doctor
+                    {t('disease_title')}
                 </h1>
                 <p className="text-slate-400 font-light tracking-widest text-sm uppercase">
-                    Intelligent Disease Analysis & Treatment Recommendations
+                    {t('disease_subtitle')}
                 </p>
             </div>
 
@@ -281,9 +283,9 @@ const Disease = () => {
                     <div className="mb-1">
                         <h2 className="text-lg font-bold tracking-wide flex items-center gap-2">
                             <Eye className="w-5 h-5 text-brand-400 drop-shadow-[0_0_6px_currentColor]" />
-                            AI Disease Localization
+                            {t('disease_localization')}
                         </h2>
-                        <p className="text-xs text-slate-500 mt-1 tracking-wide">Highlighted regions indicate infection areas</p>
+                        <p className="text-xs text-slate-500 mt-1 tracking-wide">{t('disease_highlighted')}</p>
                     </div>
 
                     {/* Image View Toggle (visible only after analysis) */}
@@ -341,9 +343,9 @@ const Disease = () => {
                                     <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-5 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] border border-white/10 group-hover:scale-110 transition-transform duration-300">
                                         <UploadCloud className="w-10 h-10 text-slate-400 group-hover:text-brand-400 drop-shadow-[0_0_10px_currentColor] transition-colors duration-300" />
                                     </div>
-                                    <h3 className="text-lg font-bold mb-2 tracking-wide">Upload Plant Image</h3>
+                                    <h3 className="text-lg font-bold mb-2 tracking-wide">{t('disease_upload_placeholder')}</h3>
                                     <p className="text-slate-500 text-sm max-w-[260px] font-light leading-relaxed">
-                                        Drag and drop a leaf image, or click to browse files for AI diagnosis.
+                                        {t('disease_upload_desc')}
                                     </p>
                                 </motion.div>
                             ) : (
@@ -394,7 +396,7 @@ const Disease = () => {
                                     <div className="w-16 h-16 rounded-full border-4 border-brand-500/20 border-t-brand-400 animate-spin" />
                                     <Leaf className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-brand-400 drop-shadow-[0_0_8px_currentColor]" />
                                 </div>
-                                <p className="text-brand-300 font-semibold tracking-widest text-sm animate-pulse">Analyzing Plant Health...</p>
+                                <p className="text-brand-300 font-semibold tracking-widest text-sm animate-pulse">{t('disease_analyzing')}</p>
                             </motion.div>
                         )}
                     </div>
@@ -430,7 +432,7 @@ const Disease = () => {
                                 ? <Loader2 className="animate-spin w-5 h-5" />
                                 : <Activity className="w-5 h-5 drop-shadow-[0_0_5px_currentColor]" />
                             }
-                            {loading ? 'Analyzing...' : 'Analyze Plant Health'}
+                            {loading ? t('disease_analyzing') : t('disease_btn_analyze')}
                         </motion.button>
 
                         {result && (
@@ -442,7 +444,7 @@ const Disease = () => {
                                 onClick={handleReset}
                                 className="px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all text-sm font-semibold tracking-widest uppercase"
                             >
-                                New
+                                {t('disease_btn_new')}
                             </motion.button>
                         )}
                     </div>
@@ -489,9 +491,9 @@ const Disease = () => {
                                 <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] border border-white/10">
                                     <Leaf className="w-12 h-12 text-slate-600 drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 tracking-wide text-slate-400">Diagnostic Report</h3>
+                                <h3 className="text-xl font-bold mb-3 tracking-wide text-slate-400">{t('disease_report_placeholder_title')}</h3>
                                 <p className="text-slate-500 font-light max-w-xs leading-relaxed">
-                                    Upload a plant image and click <strong className="text-slate-400">Analyze</strong> to receive a comprehensive AI-powered health report.
+                                    {t('disease_report_placeholder_desc')}
                                 </p>
                             </motion.div>
                         )}
@@ -584,7 +586,7 @@ const Disease = () => {
                                 </motion.div>
 
                                 {/* ── 2. SEVERITY & RISK ── */}
-                                <SectionCard icon={ThermometerSun} title="Severity & Risk Level" iconColor={getSeverityColor(severity.level).text}>
+                                <SectionCard icon={ThermometerSun} title={t('disease_severity_level')} iconColor={getSeverityColor(severity.level).text}>
                                     <SeverityBar percentage={severity.percentage || 0} level={severity.level || 'Unknown'} />
                                     <div className="mt-4 flex items-center gap-3 bg-white/[0.03] rounded-xl p-3 border border-white/5">
                                         {getRiskIcon(risk.level)}
@@ -597,7 +599,7 @@ const Disease = () => {
 
                                 {/* ── 3. SUMMARY ── */}
                                 {result.summary && (
-                                    <SectionCard icon={Info} title="Summary" iconColor="text-blue-400">
+                                    <SectionCard icon={Info} title={t('disease_summary')} iconColor="text-blue-400">
                                         <p className="text-sm text-slate-300 leading-relaxed">{result.summary}</p>
                                     </SectionCard>
                                 )}
@@ -613,7 +615,7 @@ const Disease = () => {
                                                 <Lightbulb className={`w-5 h-5 ${getSeverityColor(severity.level).text} drop-shadow-[0_0_6px_currentColor]`} />
                                             </div>
                                             <div>
-                                                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-2">Recommended Action</h3>
+                                                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-2">{t('disease_recommended_action')}</h3>
                                                 <p className="text-sm text-slate-200 leading-relaxed font-medium">{result.final_advice}</p>
                                             </div>
                                         </div>
@@ -622,7 +624,7 @@ const Disease = () => {
 
                                 {/* ── 5. EXPLANATION ── */}
                                 {explanation.causes && explanation.causes.length > 0 && (
-                                    <SectionCard icon={Microscope} title="Why This Happened" iconColor="text-purple-400">
+                                    <SectionCard icon={Microscope} title={t('disease_why_happened')} iconColor="text-purple-400">
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             {explanation.type && (
                                                 <span className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 font-semibold tracking-wide">
@@ -648,21 +650,21 @@ const Disease = () => {
 
                                 {/* ── 6. TREATMENT ── */}
                                 {(treatment.immediate?.length > 0 || treatment.prevention?.length > 0 || treatment.organic?.length > 0) && (
-                                    <SectionCard icon={Pill} title="Treatment Plan" iconColor="text-teal-400">
+                                    <SectionCard icon={Pill} title={t('disease_treatment_plan')} iconColor="text-teal-400">
                                         <TreatmentPanel treatment={treatment} />
                                     </SectionCard>
                                 )}
 
                                 {/* ── 7. TOP PREDICTIONS ── */}
                                 {result.top_predictions?.length > 0 && (
-                                    <SectionCard icon={Activity} title="Differential Diagnosis" iconColor="text-sky-400">
+                                    <SectionCard icon={Activity} title={t('disease_differential_diagnosis')} iconColor="text-sky-400">
                                         <TopPredictions predictions={result.top_predictions} />
                                     </SectionCard>
                                 )}
 
                                 {/* ── 8. SIMILAR CASES ── */}
                                 {result.similar_cases?.length > 0 && (
-                                    <SectionCard icon={TreeDeciduous} title="Similar Cases" iconColor="text-green-400">
+                                    <SectionCard icon={TreeDeciduous} title={t('disease_similar_cases')} iconColor="text-green-400">
                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                             {result.similar_cases.map((c, i) => (
                                                 <div key={i} className="bg-white/[0.03] rounded-xl p-3 border border-white/5 text-center">

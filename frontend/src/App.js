@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Leaf, Sprout, Wheat, FileText, Menu, X, BrainCircuit, Microscope } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 import Home from './pages/Home';
 import Disease from './pages/Disease';
@@ -73,13 +75,14 @@ const NavItem = ({ icon: Icon, label, path, active, onClick }) => (
 const Navbar = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation();
 
   const menuItems = [
-    { icon: Microscope, label: 'Disease Analysis', path: '/disease' },
-    { icon: Sprout, label: 'Crop Recommendations', path: '/crop' },
-    { icon: Wheat, label: 'Yield Forecast', path: '/yield' },
-    { icon: FileText, label: 'Farm Intelligence', path: '/report' },
-    { icon: BrainCircuit, label: 'Farm AI Assistant', path: '/farm-assistant' },
+    { icon: Microscope, label: t('nav_disease'),   path: '/disease' },
+    { icon: Sprout,     label: t('nav_crop'),      path: '/crop' },
+    { icon: Wheat,      label: t('nav_yield'),     path: '/yield' },
+    { icon: FileText,   label: t('nav_report'),    path: '/report' },
+    { icon: BrainCircuit, label: t('nav_assistant'), path: '/farm-assistant' },
   ];
 
   return (
@@ -111,6 +114,9 @@ const Navbar = () => {
             />
           ))}
         </div>
+
+        {/* Language Switcher — always visible */}
+        <LanguageSwitcher />
 
         {/* Mobile Toggle */}
         <button

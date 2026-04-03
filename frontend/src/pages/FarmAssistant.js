@@ -1,16 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { BrainCircuit, Send, User, Bot, Loader2, Sparkles } from 'lucide-react';
 
 const FarmAssistant = () => {
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            sender: 'ai',
-            text: 'Hello! I am your Farm AI Assistant powered by Gemini. Ask me any questions about crop health, soil management, fertilizers, or dealing with pests and diseases.'
+    const { t, i18n } = useTranslation();
+    const [messages, setMessages] = useState([]);
+    
+    // Set initial message using translations
+    useEffect(() => {
+        if (messages.length === 0) {
+            setMessages([{
+                id: 1,
+                sender: 'ai',
+                text: t('assistant_greeting')
+            }]);
+        } else if (messages.length === 1 && messages[0].sender === 'ai') {
+            // Update initial greeting when language changes
+            setMessages([{
+                id: 1,
+                sender: 'ai',
+                text: t('assistant_greeting')
+            }]);
         }
-    ]);
+    }, [t, i18n.language]);
+
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef(null);
@@ -71,9 +86,9 @@ const FarmAssistant = () => {
                 >
                     <BrainCircuit className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
-                <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Farm AI Assistant</h1>
+                <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">{t('assistant_title')}</h1>
                 <p className="text-slate-400 font-light tracking-widest text-sm uppercase flex items-center justify-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" /> Powered by Gemini
+                    <Sparkles className="w-4 h-4 text-amber-400" /> {t('assistant_subtitle')}
                 </p>
             </div>
 
@@ -129,7 +144,7 @@ const FarmAssistant = () => {
                             </div>
                             <div className="bg-slate-800/60 border border-slate-700/50 text-slate-200 rounded-2xl p-4 rounded-tl-sm backdrop-blur-md flex items-center gap-3 w-fit">
                                 <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
-                                <span className="text-sm font-medium text-slate-400 uppercase tracking-widest text-xs">Analyzing...</span>
+                                <span className="text-sm font-medium text-slate-400 uppercase tracking-widest text-xs">{t('assistant_analyzing')}</span>
                             </div>
                         </motion.div>
                     )}
@@ -143,7 +158,7 @@ const FarmAssistant = () => {
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="Ask about crop diseases, fertilizers, or soil..."
+                            placeholder={t('assistant_placeholder')}
                             disabled={loading}
                             className="w-full bg-black/40 border border-slate-700 rounded-xl py-4 pl-6 pr-14 text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all font-light tracking-wide shadow-inner disabled:opacity-50"
                         />
@@ -156,7 +171,7 @@ const FarmAssistant = () => {
                         </button>
                     </form>
                     <p className="text-center text-[10px] text-slate-500 uppercase tracking-widest mt-3">
-                        AI can make mistakes. Verify agricultural advice before applying.
+                        {t('assistant_warning')}
                     </p>
                 </div>
             </div>
