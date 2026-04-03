@@ -1,17 +1,25 @@
-streamlit
-torch
-torchvision
-scikit-learn
-pandas
-numpy
-xgboost
-lightgbm
-joblib
-plotly
-pillow
-matplotlib
-opencv-python
-seaborn
-python-dotenv
-google-generativeai
-pip install git+https://github.com/openai/CLIP.git
+# API Layer
+fastapi>=0.115.0
+uvicorn>=0.30.6
+python-multipart>=0.0.9
+requests>=2.31.0
+
+# Machine Learning & AI Models
+torch>=2.3
+torchvision>=0.18
+xgboost>=2.0
+scikit-learn>=1.5
+
+# Data Processing & Utilities
+numpy>=2.0
+pandas>=2.2
+joblib>=1.4
+pillow>=10.0
+opencv-python>=4.8.0
+
+# Advanced Models & Integrations
+google-generativeai>=0.4.0
+faiss-cpu>=1.7.4
+python-dotenv>=1.0.0
+ftfy
+clip @ git+https://github.com/openai/CLIP.git

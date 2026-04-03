@@ -91,7 +91,7 @@ const Navbar = () => {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
-        className="glass-card !rounded-full px-6 py-3 flex items-center justify-between w-full max-w-6xl !bg-slate-900/60 !border-white/10"
+        className="glass-card !overflow-visible !rounded-full px-6 py-3 flex items-center justify-between w-full max-w-6xl !bg-slate-900/60 !border-white/10"
       >
         <Link to="/" className="flex items-center gap-3 mr-8 group relative z-10" onClick={() => setMobileOpen(false)}>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-[0_0_20px_rgba(76,175,80,0.4)] group-hover:shadow-[0_0_30px_rgba(76,175,80,0.6)] transition-shadow duration-300">

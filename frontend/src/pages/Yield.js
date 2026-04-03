@@ -394,7 +394,7 @@ const TrendCard = ({ trend }) => {
 };
 
 const AlertsCard = ({ alerts }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   if (!alerts?.length) return null;
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
@@ -419,7 +419,7 @@ const AlertsCard = ({ alerts }) => {
 };
 
 const ExplanationCard = ({ explanation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   if (!explanation) return null;
   return (
