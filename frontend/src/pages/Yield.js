@@ -562,7 +562,7 @@ const RiskCard = ({ risk }) => {
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
       className="glass-card p-6">
-      <SectionLabel icon={ShieldAlert} text="Risk Assessment" color="text-rose-400" />
+      <SectionLabel icon={ShieldAlert} text={t('section_risk')} color="text-rose-400" />
       <div className="flex items-center gap-4 mb-5">
         <div className="relative w-20 h-20 shrink-0">
           <svg viewBox="0 0 36 36" className="w-20 h-20 -rotate-90">
