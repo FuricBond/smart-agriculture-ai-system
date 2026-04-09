@@ -114,5 +114,22 @@
   "assistant_greeting": "Hello! I am your Farm AI Assistant powered by Gemini. Ask me any questions about crop health, soil management, fertilizers, or dealing with pests and diseases.",
   "assistant_analyzing": "Analyzing...",
   "assistant_placeholder": "Ask about crop diseases, fertilizers, or soil...",
-  "assistant_warning": "AI can make mistakes. Verify agricultural advice before applying."
+  "assistant_warning": "AI can make mistakes. Verify agricultural advice before applying.",
+  "crop_title": "Smart Crop Recommendation",
+  "crop_subtitle": "Identify the best crops for your soil and climate.",
+  "crop_nitrogen": "Nitrogen",
+  "crop_phosphorus": "Phosphorus",
+  "crop_potassium": "Potassium",
+  "crop_temperature": "Temperature",
+  "crop_humidity": "Humidity",
+  "crop_ph": "pH",
+  "crop_rainfall": "Rainfall",
+  "crop_btn_analyze": "Get Recommendation",
+  "crop_btn_loading": "Analyzing Soil...",
+  "crop_placeholder": "Awaiting soil and climate data to generate recommendation.",
+  "crop_recommended": "Recommended Crop",
+  "crop_confidence": "Confidence Score",
+  "crop_alternatives": "Top Alternatives",
+  "crop_advice": "Agronomic Advice",
+  "crop_ai_advisor": "AI Farming Advisor"
 }

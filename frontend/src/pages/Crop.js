@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Droplets, CheckCircle, AlertTriangle, Loader2, Brain, Leaf, Sun, CloudRain, FlaskConical, Layers, Hexagon, Sprout } from 'lucide-react';
 
 const Crop = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         Nitrogen: 90,
         Phosphorus: 40,
@@ -38,13 +40,13 @@ const Crop = () => {
     };
 
     const fields = [
-        { name: 'Nitrogen', icon: Layers, unit: 'kg/ha', color: 'text-soil-400' },
-        { name: 'Phosphorus', icon: Hexagon, unit: 'kg/ha', color: 'text-brand-400' },
-        { name: 'Potassium', icon: Leaf, unit: 'kg/ha', color: 'text-harvest-400' },
-        { name: 'Temperature', icon: Sun, unit: '°C', color: 'text-amber-500' },
-        { name: 'Humidity', icon: Droplets, unit: '%', color: 'text-sky-400' },
-        { name: 'pH', icon: FlaskConical, unit: 'level', color: 'text-brand-300' },
-        { name: 'Rainfall', icon: CloudRain, unit: 'mm', color: 'text-blue-400' }
+        { name: 'Nitrogen',    labelKey: 'crop_nitrogen',    icon: Layers,      unit: 'kg/ha',  color: 'text-soil-400'    },
+        { name: 'Phosphorus',  labelKey: 'crop_phosphorus',  icon: Hexagon,     unit: 'kg/ha',  color: 'text-brand-400'   },
+        { name: 'Potassium',   labelKey: 'crop_potassium',   icon: Leaf,        unit: 'kg/ha',  color: 'text-harvest-400' },
+        { name: 'Temperature', labelKey: 'crop_temperature', icon: Sun,         unit: '°C',     color: 'text-amber-500'   },
+        { name: 'Humidity',    labelKey: 'crop_humidity',    icon: Droplets,    unit: '%',      color: 'text-sky-400'     },
+        { name: 'pH',          labelKey: 'crop_ph',          icon: FlaskConical,unit: 'level',  color: 'text-brand-300'   },
+        { name: 'Rainfall',    labelKey: 'crop_rainfall',    icon: CloudRain,   unit: 'mm',     color: 'text-blue-400'    },
     ];
 
     return (
@@ -62,8 +64,12 @@ const Crop = () => {
                 >
                     <Sprout className="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                 </motion.div>
-                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Smart Crop Recommendation</h1>
-                <p className="text-slate-400 font-light tracking-widest text-sm uppercase">Identify the best crops for your soil and climate.</p>
+                <h1 className="text-4xl font-extrabold mb-3 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+                    {t('crop_title')}
+                </h1>
+                <p className="text-slate-400 font-light tracking-widest text-sm uppercase">
+                    {t('crop_subtitle')}
+                </p>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-10">
@@ -74,14 +80,15 @@ const Crop = () => {
                     transition={{ delay: 0.2 }}
                     className="glass-card p-10 relative overflow-hidden group"
                 >
-                    {/* Subtle glow behind form */}
                     <div className="absolute inset-0 bg-brand-500/10 blur-[80px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
 
                     <form onSubmit={handlePredict} className="grid grid-cols-2 gap-6 relative z-10">
                         {fields.map(f => (
                             <div key={f.name} className={f.name === 'Rainfall' ? 'col-span-2' : ''}>
                                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
-                                    <f.icon className={`w-4 h-4 ${f.color} drop-shadow-[0_0_5px_currentColor]`} /> {f.name} <span className="text-slate-500 lowercase opacity-50 ml-auto">({f.unit})</span>
+                                    <f.icon className={`w-4 h-4 ${f.color} drop-shadow-[0_0_5px_currentColor]`} />
+                                    {t(f.labelKey)}
+                                    <span className="text-slate-500 lowercase opacity-50 ml-auto">({f.unit})</span>
                                 </label>
                                 <input
                                     type="number"
@@ -100,8 +107,10 @@ const Crop = () => {
                                 disabled={loading}
                                 className={`btn-primary w-full py-4 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 ${loading && 'opacity-50 cursor-not-allowed shadow-none border-t border-white/5'}`}
                             >
-                                {loading ? <Loader2 className="animate-spin w-5 h-5 drop-shadow-[0_0_5px_currentColor]" /> : <Sprout className="w-5 h-5 drop-shadow-[0_0_5px_currentColor]" />}
-                                {loading ? 'Analyzing Soil...' : 'Get Recommendation'}
+                                {loading
+                                    ? <Loader2 className="animate-spin w-5 h-5 drop-shadow-[0_0_5px_currentColor]" />
+                                    : <Sprout className="w-5 h-5 drop-shadow-[0_0_5px_currentColor]" />}
+                                {loading ? t('crop_btn_loading') : t('crop_btn_analyze')}
                             </button>
                         </div>
                     </form>
@@ -139,7 +148,9 @@ const Crop = () => {
                                 <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] border border-white/10">
                                     <Sprout className="w-10 h-10 text-slate-500 drop-shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
                                 </div>
-                                <p className="text-slate-400 font-light tracking-wide max-w-[200px]">Awaiting soil and climate data to generate recommendation.</p>
+                                <p className="text-slate-400 font-light tracking-wide max-w-[200px]">
+                                    {t('crop_placeholder')}
+                                </p>
                             </motion.div>
                         )}
 
@@ -163,7 +174,9 @@ const Crop = () => {
                                     </motion.div>
 
                                     <div className="w-full text-center relative z-10">
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Recommended Crop</p>
+                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
+                                            {t('crop_recommended')}
+                                        </p>
                                         <motion.div
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
@@ -177,8 +190,12 @@ const Crop = () => {
                                     {result.confidence && (
                                         <div className="w-full max-w-xs relative z-10 mt-4">
                                             <div className="flex justify-between items-end mb-1">
-                                                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Confidence Score</p>
-                                                <span className="font-bold text-brand-300 drop-shadow-[0_0_5px_currentColor] text-sm">{result.confidence.toFixed(1)}%</span>
+                                                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                                                    {t('crop_confidence')}
+                                                </p>
+                                                <span className="font-bold text-brand-300 drop-shadow-[0_0_5px_currentColor] text-sm">
+                                                    {result.confidence.toFixed(1)}%
+                                                </span>
                                             </div>
                                             <div className="h-1.5 rounded-full bg-white/10 overflow-hidden shadow-inner">
                                                 <motion.div
@@ -194,7 +211,9 @@ const Crop = () => {
 
                                 {result.top_recommendations && result.top_recommendations.length > 0 && (
                                     <div className="mt-4 relative z-10 w-full mb-6">
-                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-white/10 pb-2">Top Alternatives</h4>
+                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-white/10 pb-2">
+                                            {t('crop_alternatives')}
+                                        </h4>
                                         <div className="space-y-3">
                                             {result.top_recommendations.map((rec, i) => (
                                                 <div key={i} className="flex items-center justify-between text-sm bg-white/5 p-3 rounded-lg border border-white/5 shadow-sm">
@@ -208,7 +227,9 @@ const Crop = () => {
 
                                 {result.agronomic_advice && result.agronomic_advice.length > 0 && (
                                     <div className="mt-2 relative z-10 w-full mb-4">
-                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-white/10 pb-2">Agronomic Advice</h4>
+                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-white/10 pb-2">
+                                            {t('crop_advice')}
+                                        </h4>
                                         <ul className="space-y-3">
                                             {result.agronomic_advice.map((advice, i) => (
                                                 <li key={i} className="flex gap-3 text-sm text-slate-300 leading-relaxed bg-brand-900/10 p-3 rounded-lg border border-brand-500/10 hover:border-brand-500/30 transition-colors">
@@ -228,7 +249,8 @@ const Crop = () => {
                                         className="mt-6 relative z-10 w-full mb-4"
                                     >
                                         <h4 className="flex items-center gap-2 text-xs font-bold text-amber-300 uppercase tracking-widest mb-3 border-b border-amber-500/20 pb-2 drop-shadow-[0_0_5px_currentColor]">
-                                            <Brain className="w-4 h-4 text-amber-400" /> AI Farming Advisor
+                                            <Brain className="w-4 h-4 text-amber-400" />
+                                            {t('crop_ai_advisor')}
                                         </h4>
                                         <div className="text-sm text-amber-100/80 leading-relaxed bg-gradient-to-br from-amber-500/10 to-transparent p-5 rounded-xl border border-amber-500/20 shadow-[0_0_20px_rgba(245,158,11,0.05)] whitespace-pre-wrap font-light tracking-wide">
                                             {result.ai_advice}

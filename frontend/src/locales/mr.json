@@ -114,5 +114,22 @@
   "assistant_greeting": "नमस्कार! मी जेमिनीद्वारे समर्थित तुमचा शेती एआय सहाय्यक आहे. मला पीक आरोग्य, माती व्यवस्थापन, खते किंवा कीड आणि रोगांविषयी काहीही विचारा.",
   "assistant_analyzing": "विश्लेषण करत आहे...",
   "assistant_placeholder": "पिकांचे आजार, खते किंवा मातीबद्दल विचारा...",
-  "assistant_warning": "AI चुका करू शकते. लागू करण्यापूर्वी कृषी सल्ल्याची पडताळणी करा."
+  "assistant_warning": "AI चुका करू शकते. लागू करण्यापूर्वी कृषी सल्ल्याची पडताळणी करा.",
+  "crop_title": "स्मार्ट पीक शिफारस",
+  "crop_subtitle": "आपल्या माती आणि हवामानासाठी सर्वोत्तम पिके ओळखा.",
+  "crop_nitrogen": "नायट्रोजन",
+  "crop_phosphorus": "फॉस्फरस",
+  "crop_potassium": "पोटॅशियम",
+  "crop_temperature": "तापमान",
+  "crop_humidity": "आर्द्रता",
+  "crop_ph": "सामू (pH)",
+  "crop_rainfall": "पर्जन्यमान",
+  "crop_btn_analyze": "शिफारस मिळवा",
+  "crop_btn_loading": "मातीचे विश्लेषण करत आहे...",
+  "crop_placeholder": "शिफारस तयार करण्यासाठी माती आणि हवामान डेटाची प्रतीक्षा.",
+  "crop_recommended": "शिफारस केलेले पीक",
+  "crop_confidence": "विश्वास गुण",
+  "crop_alternatives": "शीर्ष पर्याय",
+  "crop_advice": "कृषी सल्ला",
+  "crop_ai_advisor": "AI शेती सल्लागार"
 }
