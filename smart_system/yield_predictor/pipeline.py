@@ -55,7 +55,7 @@ class YieldPipeline:
         self._area_encoder = area_encoder
         self._crop_encoder = crop_encoder
         self._loaded       = True
-        logger.info("YieldPipeline loaded ✓")
+        logger.info("YieldPipeline loaded [OK]")
 
     # ──────────────────────────────────────────────────────────────────
     # Prediction

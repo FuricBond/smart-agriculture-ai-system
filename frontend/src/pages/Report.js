@@ -54,7 +54,7 @@ const Report = () => {
         }
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/report', payload, {
+            const { data } = await axios.post('http://127.0.0.1:8000/smart-report', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setResult(data.smart_report);

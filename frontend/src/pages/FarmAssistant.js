@@ -49,7 +49,7 @@ const FarmAssistant = () => {
         setLoading(true);
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/farm-assistant', {
+            const { data } = await axios.post('http://127.0.0.1:8000/farm-assistant', {
                 question: userMsg.text
             });
 

@@ -192,7 +192,7 @@ def startup():
                 enable_similarity=True,
                 unknown_threshold=60.0,
             )
-            log_info("Plant Doctor Pipeline initialized ✓")
+            log_info("Plant Doctor Pipeline initialized [OK]")
         except Exception as e:
             log_error(f"Plant Doctor Pipeline init failed: {e}")
 
@@ -206,14 +206,14 @@ def startup():
                 area_encoder  = yield_engine.area_encoder,
                 crop_encoder  = yield_engine.crop_encoder,
             )
-            log_info("Yield Prediction Pipeline (Phase-1) initialized ✓")
+            log_info("Yield Prediction Pipeline (Phase-1) initialized [OK]")
         except Exception as e:
             log_error(f"Yield Pipeline init failed: {e}")
 
-    disease_icon = "✓" if disease_status else "⚠️  MISSING"
-    crop_icon    = "✓" if crop_status    else "⚠️  MISSING"
-    yield_icon   = "✓" if yield_status   else "⚠️  MISSING"
-    doctor_icon  = "✓" if plant_doctor_pipeline else "⚠️  MISSING"
+    disease_icon = "[OK]" if disease_status else "[MISSING]"
+    crop_icon    = "[OK]" if crop_status    else "[MISSING]"
+    yield_icon   = "[OK]" if yield_status   else "[MISSING]"
+    doctor_icon  = "[OK]" if plant_doctor_pipeline else "[MISSING]"
 
     banner = f"""
 ================================
@@ -253,7 +253,7 @@ def _load_disease() -> bool:
         if ok:
             disease_engine = engine
             _disease_loaded = True
-            log_info("Disease Model Loaded ✓")
+            log_info("Disease Model Loaded [OK]")
         else:
             log_error("Disease Model load() returned False ⚠️")
         return ok
@@ -271,7 +271,7 @@ def _load_crop() -> bool:
         if ok:
             crop_engine = engine
             _crop_loaded = True
-            log_info("Crop Model Loaded ✓")
+            log_info("Crop Model Loaded [OK]")
         else:
             log_error("Crop Model load() returned False ⚠️")
         return ok
@@ -289,7 +289,7 @@ def _load_yield() -> bool:
         if ok:
             yield_engine = engine
             _yield_loaded = True
-            log_info("Yield Model Loaded ✓")
+            log_info("Yield Model Loaded [OK]")
         else:
             log_error("Yield Model load() returned False ⚠️")
         return ok

@@ -30,7 +30,7 @@ const Crop = () => {
         setResult(null);
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/crop', formData);
+            const { data } = await axios.post('http://127.0.0.1:8000/predict-crop', formData);
             setResult(data);
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to initialize array.');
