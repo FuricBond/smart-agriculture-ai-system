@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "framer-motion": "^12.38.0",
-    "i18next": "^26.0.3",
-    "lucide-react": "^1.7.0",
-    "react-i18next": "^17.0.2",
-    "recharts": "^3.8.1"
-  }
-}

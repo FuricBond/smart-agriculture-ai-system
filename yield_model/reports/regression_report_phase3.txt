@@ -1,0 +1,17 @@
+YIELD PREDICTION MODEL — PHASE 3 REGRESSION REPORT
+============================================================
+
+Model Type:          XGBoostRegressor
+Improvements:        Y3 (Season), Y4 (XGBoost)
+
+R² Score:            0.8810
+Mean Absolute Error: 21.97
+Root MSE:            322.47
+MAPE:                286.29%
+CV R² (50k):         0.8722 ± 0.0378
+
+Dataset Size:        339,390 samples
+Features:            ['Area_encoded', 'Item_encoded', 'Year', 'Decade', 'Years_since_2000', 'Season_encoded']
+Areas:               36
+Crops:               56
+Model File Size:     6.0 MB

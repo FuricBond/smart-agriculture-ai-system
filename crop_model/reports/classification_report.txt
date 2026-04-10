@@ -1,0 +1,41 @@
+CROP RECOMMENDATION MODEL — CLASSIFICATION REPORT
+============================================================
+
+Test Accuracy:       0.9955
+F1 Score (Macro):    0.9954
+F1 Score (Weighted): 0.9954
+Precision (Weighted):0.9959
+Recall (Weighted):   0.9955
+
+Cross-Validation:    0.9898 ± 0.0043
+
+============================================================
+
+              precision    recall  f1-score   support
+
+       apple     1.0000    1.0000    1.0000        20
+      banana     1.0000    1.0000    1.0000        20
+   blackgram     1.0000    1.0000    1.0000        20
+    chickpea     1.0000    1.0000    1.0000        20
+     coconut     1.0000    1.0000    1.0000        20
+      coffee     1.0000    1.0000    1.0000        20
+      cotton     1.0000    1.0000    1.0000        20
+      grapes     1.0000    1.0000    1.0000        20
+        jute     1.0000    1.0000    1.0000        20
+ kidneybeans     1.0000    1.0000    1.0000        20
+      lentil     1.0000    0.9000    0.9474        20
+       maize     1.0000    1.0000    1.0000        20
+       mango     1.0000    1.0000    1.0000        20
+   mothbeans     0.9091    1.0000    0.9524        20
+    mungbean     1.0000    1.0000    1.0000        20
+   muskmelon     1.0000    1.0000    1.0000        20
+      orange     1.0000    1.0000    1.0000        20
+      papaya     1.0000    1.0000    1.0000        20
+  pigeonpeas     1.0000    1.0000    1.0000        20
+ pomegranate     1.0000    1.0000    1.0000        20
+        rice     1.0000    1.0000    1.0000        20
+  watermelon     1.0000    1.0000    1.0000        20
+
+    accuracy                         0.9955       440
+   macro avg     0.9959    0.9955    0.9954       440
+weighted avg     0.9959    0.9955    0.9954       440
