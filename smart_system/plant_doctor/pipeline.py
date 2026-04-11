@@ -32,6 +32,7 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
+import cv2
 import numpy as np
 
 logger = logging.getLogger("plant_doctor.pipeline")
@@ -366,7 +367,43 @@ class PlantDoctorPipeline:
         # STAGE 7: Grad-CAM Heatmap
         # ==============================================================
         heatmap = None
-        if self._gradcam is not None and not parsed.get("is_healthy", False):
+        is_healthy = parsed.get("is_healthy", False)
+
+        # Decide whether to generate Grad-CAM:
+        #   • Always run for diseased predictions
+        #   • Run even for "healthy" predictions when model confidence < 90%
+        #     (borderline / ambiguous cases like subtle disease on grape leaf)
+        run_gradcam = (
+            self._gradcam is not None
+            and (
+                not is_healthy
+                or calibrated_confidence < 90.0   # low-confidence healthy → still show
+            )
+        )
+
+        # For borderline healthy predictions: target the 2nd-best non-healthy class
+        # so the user sees what region triggered the disease suspicion
+        gradcam_class_idx = None
+        try:
+            if is_healthy and calibrated_confidence < 90.0:
+                # Find best non-healthy class from top predictions
+                for pred_name, _ in calibrated_preds[1:]:
+                    if "healthy" not in pred_name.lower():
+                        gradcam_class_idx = self.disease_engine.class_names.index(pred_name)
+                        logger.info(
+                            f"Stage 7/13: Borderline healthy ({calibrated_confidence:.1f}%) "
+                            f"— running Grad-CAM on 2nd class: {pred_name}"
+                        )
+                        break
+                if gradcam_class_idx is None:
+                    # All top predictions are healthy — truly healthy
+                    run_gradcam = False
+            else:
+                gradcam_class_idx = self.disease_engine.class_names.index(raw_label)
+        except (ValueError, IndexError):
+            gradcam_class_idx = None   # generate() will auto-select predicted class
+
+        if run_gradcam:
             logger.info("Stage 7/13: Grad-CAM Heatmap Generation")
             try:
                 import torch
@@ -375,65 +412,18 @@ class PlantDoctorPipeline:
                 img = Image.open(image_path).convert("RGB")
                 img_tensor = self.disease_engine.transform(img).unsqueeze(0)
 
-                class_idx = self.disease_engine.class_names.index(raw_label)
-                heatmap = self._gradcam.generate(img_tensor, class_idx)
-
-                # ==============================================================
-                # SAM INTEGRATION: Combine SAM (segmentation) + Grad-CAM (attention)
-                # ==============================================================
-                try:
-                    import cv2
-                    from .sam_model import SAMModel
-
-                    if getattr(self, "_sam_model", None) is None:
-                        logger.info("Initializing SAM Model...")
-                        self._sam_model = SAMModel()
-
-                    logger.info("Extracting top disease hotspots for SAM segmentation...")
-                    
-                    # Find top 5 highest activation pixels to guide SAM to multiple disease spots
-                    flat_indices = np.argsort(heatmap.flatten())[-5:]
-                    y_coords, x_coords = np.unravel_index(flat_indices, heatmap.shape)
-                    
-                    with Image.open(image_path) as orig_img:
-                        orig_w, orig_h = orig_img.size
-                        
-                    points, labels = [], []
-                    for y_idx, x_idx in zip(y_coords, x_coords):
-                        if heatmap[y_idx, x_idx] > 0.0:  # Must be an activated region
-                            px = int((x_idx / 224.0) * orig_w)
-                            py = int((y_idx / 224.0) * orig_h)
-                            points.append([px, py])
-                            labels.append(1)
-                            
-                    if not points: # Fallback to center if strangely no activation
-                        points, labels = [[orig_w // 2, orig_h // 2]], [1]
-                        
-                    sam_point, sam_label = np.array(points), np.array(labels)
-                    sam_mask = self._sam_model.get_mask(image_path, input_point=sam_point, input_label=sam_label)
-                    
-                    # Resize SAM mask to flexibly match Grad-CAM dimensions
-                    sam_mask_resized = cv2.resize(
-                        sam_mask, 
-                        (heatmap.shape[1], heatmap.shape[0]), 
-                        interpolation=cv2.INTER_NEAREST
-                    )
-                    
-                    # Generate a solid golden-yellow polygon mask (0.75 strength in Colormap HOT = golden orange)
-                    # This abandons fuzzy blobs and produces a crisp, exact disease segmentation
-                    heatmap = sam_mask_resized * 0.75
-                    
-                except Exception as sam_err:
-                    logger.warning(f"SAM Integration skipped/failed: {sam_err}")
-                # ==============================================================
-
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                overlay_name = f"gradcam_{timestamp}.jpg"
-                overlay_path = os.path.join(self.output_dir, overlay_name)
-                saved = self._gradcam.create_overlay(
-                    image_path, heatmap, overlay_path
+                heatmap = self._gradcam.generate(
+                    img_tensor, class_idx=gradcam_class_idx
                 )
-                result["heatmap_path"] = saved
+
+                if heatmap is not None:
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    overlay_name = f"gradcam_{timestamp}.jpg"
+                    overlay_path = os.path.join(self.output_dir, overlay_name)
+                    saved = self._gradcam.create_overlay(
+                        image_path, heatmap, overlay_path
+                    )
+                    result["heatmap_path"] = saved
 
             except Exception as e:
                 logger.warning(f"Grad-CAM generation failed: {e}")
@@ -441,8 +431,7 @@ class PlantDoctorPipeline:
                     "Grad-CAM heatmap generation failed -- skipping."
                 )
         else:
-            if parsed.get("is_healthy", False):
-                logger.info("Stage 7/13: Skipping Grad-CAM -- plant appears healthy")
+            logger.info("Stage 7/13: Skipping Grad-CAM -- plant is healthy (high confidence)")
 
         # ==============================================================
         # STAGE 8: Severity Estimation
