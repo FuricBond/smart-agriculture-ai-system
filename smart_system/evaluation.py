@@ -25,6 +25,13 @@ from __future__ import annotations
 
 import os
 import sys
+import io
+
+if isinstance(sys.stdout, io.TextIOWrapper):
+    sys.stdout.reconfigure(encoding='utf-8')
+if isinstance(sys.stderr, io.TextIOWrapper):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 import time
 import glob
 import json

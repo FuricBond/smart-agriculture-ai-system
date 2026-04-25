@@ -35,11 +35,17 @@ PROJECT_ROOT = r"D:\Project\CropProject"
 # MODEL PATHS
 # ═══════════════════════════════════════════════════════════════
 
-# Disease Detection Model
+# Disease Detection Model (Primary — EfficientNet-B0)
 DISEASE_MODEL_DIR   = os.path.join(PROJECT_ROOT, "disease_model", "models")
 DISEASE_MODEL_PATH  = os.path.join(DISEASE_MODEL_DIR, "disease_model.pth")
 DISEASE_CLASS_MAP   = os.path.join(DISEASE_MODEL_DIR, "class_names.json")
 DISEASE_DATA_DIR    = os.path.join(PROJECT_ROOT, "disease_model", "data", "combined")
+
+# Ensemble Secondary Models
+# These are fine-tuned versions saved by disease_model/scripts/train_ensemble_models.py
+# If these files do not exist, the ensemble falls back to EfficientNet-B0 only.
+ENSEMBLE_RESNET50_PATH   = os.path.join(DISEASE_MODEL_DIR, "ensemble_resnet50.pth")
+ENSEMBLE_EFFB1_PATH      = os.path.join(DISEASE_MODEL_DIR, "ensemble_efficientnet_b1.pth")
 
 # Crop Recommendation Model
 CROP_MODEL_DIR      = os.path.join(PROJECT_ROOT, "crop_model", "models")
@@ -122,6 +128,24 @@ VALID_IMAGE_EXTENSIONS        = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.web
 CONFIDENCE_HIGH:     float = 85.0   # ≥ 85 %  → reliable prediction
 CONFIDENCE_MODERATE: float = 60.0   # ≥ 60 %  → acceptable, verify
 CONFIDENCE_LOW:      float = 40.0   # < 40 %  → unreliable, retake image
+
+
+# ═══════════════════════════════════════════════════════════════
+# ENSEMBLE MODEL SETTINGS
+# ═══════════════════════════════════════════════════════════════
+
+# Weighted ensemble probabilities (must sum to 1.0)
+ENSEMBLE_WEIGHT_B0:    float = 0.4   # EfficientNet-B0 (primary, fine-tuned)
+ENSEMBLE_WEIGHT_R50:   float = 0.3   # ResNet-50 (pretrained + fine-tuned)
+ENSEMBLE_WEIGHT_B1:    float = 0.3   # EfficientNet-B1 (pretrained + fine-tuned)
+
+# Open-set detection threshold (raw probability 0–1)
+# If max ensemble probability < this → return "Unknown Disease"
+ENSEMBLE_UNKNOWN_THRESHOLD: float = 0.70
+
+# Early-exit threshold (raw probability 0–1)
+# If EfficientNet-B0 alone exceeds this, skip ensemble computation
+ENSEMBLE_EARLY_EXIT_THRESHOLD: float = 0.85
 
 
 # ═══════════════════════════════════════════════════════════════

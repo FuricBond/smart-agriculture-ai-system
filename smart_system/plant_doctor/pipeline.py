@@ -1,5 +1,5 @@
 """
-Plant Doctor Pipeline v2.1 — Master Orchestrator
+Plant Doctor Pipeline v3.0 — Master Orchestrator
 =====================================================
 Chains all modular post-processing stages into a single
 unified prediction pipeline with decision support.
@@ -7,12 +7,12 @@ unified prediction pipeline with decision support.
 Pipeline Stages (13 total)
 ---------------------------
    1. Image Quality Check (pre-processing)
-   2. Core Model Inference (EfficientNet -- NOT modified)
+   2. Core Model Inference (Ensemble: EfficientNet-B0 + ResNet-50 + EfficientNet-B1)
    3. Confidence Calibration (temperature scaling + soft cap)
    4. Label Parsing (Plant + Disease)
    5. Open-World Detection
    6. Multi-Label Top-K Output
-   7. Grad-CAM Heatmap Generation
+   7. Grad-CAM Heatmap Generation (EfficientNet-B0 ONLY)
    8. Severity Estimation
    9. Risk Assessment
   10. Explanation Engine
@@ -21,7 +21,7 @@ Pipeline Stages (13 total)
   13. Final Output Enhancement (user-centric polish)
 
 Author  : Smart Agriculture AI Team
-Version : 2.1.0
+Version : 3.0.0
 """
 
 from __future__ import annotations
@@ -66,6 +66,7 @@ class PlantDoctorPipeline:
         enable_gradcam: bool = True,
         enable_similarity: bool = True,
         unknown_threshold: float = 60.0,
+        ensemble_engine=None,        # NEW: optional EnsembleEngine instance
     ) -> None:
         from .image_quality import ImageQualityChecker
         from .confidence_calibrator import ConfidenceCalibrator
@@ -84,6 +85,20 @@ class PlantDoctorPipeline:
             "..", "..", "tmp", "plant_doctor_output"
         )
         os.makedirs(self.output_dir, exist_ok=True)
+
+        # ── Ensemble Engine (optional) ─────────────────────────
+        # When provided, Stage 2 uses ensemble inference.
+        # Grad-CAM (Stage 7) always uses EfficientNet-B0 only.
+        self._ensemble_engine = ensemble_engine
+        self._ensemble_predictor = None
+        if ensemble_engine is not None:
+            try:
+                from .ensemble_predictor import EnsemblePredictor
+                self._ensemble_predictor = EnsemblePredictor(ensemble_engine)
+                logger.info("EnsemblePredictor initialized — Stage 2 will use ensemble inference")
+            except Exception as ep_err:
+                logger.warning(f"EnsemblePredictor init failed: {ep_err} — falling back to single model")
+                self._ensemble_predictor = None
 
         # -- Initialize sub-modules --
         self.quality_checker = ImageQualityChecker()
@@ -224,6 +239,7 @@ class PlantDoctorPipeline:
             "diagnosis_time_ms": 0,
             "final_source": "CNN Model",
             "clip_predictions": [],
+            "ensemble_meta": {},   # NEW: populated when ensemble is used
         }
 
         # ==============================================================
@@ -239,8 +255,20 @@ class PlantDoctorPipeline:
         # ==============================================================
         # STAGE 2: Core Model Inference
         # ==============================================================
-        logger.info("Stage 2/13: Core Model Inference (EfficientNet)")
-        prediction = self.disease_engine.predict(image_path, top_k=top_k)
+        # When ensemble_engine is available, use the ensemble predictor.
+        # Otherwise fall back to the original single-model DiseaseEngine.
+        # Grad-CAM (Stage 7) is ALWAYS driven by EfficientNet-B0 only.
+        # ==============================================================
+        if self._ensemble_predictor is not None:
+            logger.info("Stage 2/13: Ensemble Inference (EfficientNet-B0 + ResNet-50 + EfficientNet-B1)")
+            prediction = self._ensemble_predictor.predict(image_path, top_k=top_k)
+            # Surface ensemble metadata in final result
+            result["ensemble_meta"] = prediction.get("ensemble_meta", {})
+            if prediction["ensemble_meta"].get("used_ensemble"):
+                result["final_source"] = "Ensemble (B0 + R50 + B1)"
+        else:
+            logger.info("Stage 2/13: Core Model Inference (EfficientNet-B0 single model)")
+            prediction = self.disease_engine.predict(image_path, top_k=top_k)
 
         if not prediction.get("success"):
             result["warnings"].append(

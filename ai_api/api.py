@@ -96,10 +96,12 @@ crop_engine    = None
 yield_engine   = None
 plant_doctor_pipeline = None
 yield_pipeline = None          # Phase-1 Yield Prediction Pipeline
+ensemble_engine = None         # Ensemble: EfficientNet-B0 + ResNet-50 + EfficientNet-B1
 
-_disease_loaded = False
-_crop_loaded    = False
-_yield_loaded   = False
+_disease_loaded   = False
+_crop_loaded      = False
+_yield_loaded     = False
+_ensemble_loaded  = False      # True when secondary ensemble models are ready
 yield_trends_df = None
 
 
@@ -153,6 +155,7 @@ def cleanup_outputs(max_files: int = 20):
 def startup():
     global disease_engine, crop_engine, yield_engine, yield_pipeline
     global _disease_loaded, _crop_loaded, _yield_loaded
+    global ensemble_engine, _ensemble_loaded
 
     # ── Version probing ───────────────────────────────────────
     py_ver    = platform.python_version()
@@ -180,7 +183,29 @@ def startup():
     except Exception as e:
         log_error(f"Failed to load Yield Trends: {e}")
 
-    # ── Initialize Plant Doctor Pipeline ────────────────────
+    # ── Initialize Ensemble Engine ───────────────────────
+    # Load ResNet-50 + EfficientNet-B1 as secondary ensemble models.
+    # If this fails, the system falls back to EfficientNet-B0 only.
+    if disease_status and disease_engine is not None:
+        try:
+            from smart_system.ensemble_engine import EnsembleEngine
+            ensemble_engine = EnsembleEngine(
+                disease_engine=disease_engine,
+                num_classes=len(disease_engine.class_names),
+                enable_early_exit=True,
+            )
+            ok = ensemble_engine.load_secondary_models()
+            if ok:
+                _ensemble_loaded = True
+                log_info("Ensemble Engine (ResNet-50 + EfficientNet-B1) loaded [OK]")
+            else:
+                log_error("Ensemble secondary model load returned False ⚠️")
+                ensemble_engine = None
+        except Exception as e:
+            log_error(f"Ensemble Engine init failed: {e}")
+            ensemble_engine = None
+
+    # ── Initialize Plant Doctor Pipeline (now with Ensemble) ───
     global plant_doctor_pipeline
     if disease_status and disease_engine is not None:
         try:
@@ -191,6 +216,7 @@ def startup():
                 enable_gradcam=True,
                 enable_similarity=True,
                 unknown_threshold=60.0,
+                ensemble_engine=ensemble_engine,   # Pass ensemble (None if not loaded)
             )
             log_info("Plant Doctor Pipeline initialized [OK]")
         except Exception as e:
@@ -210,10 +236,11 @@ def startup():
         except Exception as e:
             log_error(f"Yield Pipeline init failed: {e}")
 
-    disease_icon = "[OK]" if disease_status else "[MISSING]"
-    crop_icon    = "[OK]" if crop_status    else "[MISSING]"
-    yield_icon   = "[OK]" if yield_status   else "[MISSING]"
-    doctor_icon  = "[OK]" if plant_doctor_pipeline else "[MISSING]"
+    disease_icon  = "[OK]" if disease_status       else "[MISSING]"
+    crop_icon     = "[OK]" if crop_status           else "[MISSING]"
+    yield_icon    = "[OK]" if yield_status          else "[MISSING]"
+    doctor_icon   = "[OK]" if plant_doctor_pipeline else "[MISSING]"
+    ensemble_icon = "[OK]" if _ensemble_loaded       else "[NOT TRAINED]"
 
     banner = f"""
 ================================
@@ -230,6 +257,7 @@ def startup():
     Crop Model       {crop_icon}
     Yield Model      {yield_icon}
     Plant Doctor AI  {doctor_icon}
+    Ensemble Models  {ensemble_icon}
 ================================
 """
     print(banner)
@@ -410,11 +438,12 @@ def error_response(message: str, status_code: int = 500):
 @app.get("/health")
 async def health_check():
     return {
-        "status":        "running",
-        "disease_model": _disease_loaded,
-        "crop_model":    _crop_loaded,
-        "yield_model":   _yield_loaded,
-        "timestamp":     datetime.now().isoformat()
+        "status":          "running",
+        "disease_model":   _disease_loaded,
+        "ensemble_models": _ensemble_loaded,
+        "crop_model":      _crop_loaded,
+        "yield_model":     _yield_loaded,
+        "timestamp":       datetime.now().isoformat()
     }
 
 
@@ -492,6 +521,273 @@ async def predict_disease(file: UploadFile = File(...)):
         raise
     except Exception as e:
         error_response(f"Disease prediction exception: {e}")
+
+
+# ══════════════════════════════════════════════════════════════
+# DETECT-DISEASE — ENSEMBLE + GRAD-CAM ENDPOINT (v3.1)
+# ══════════════════════════════════════════════════════════════
+
+@app.post("/detect-disease")
+async def detect_disease(request: Request, file: UploadFile = File(...)):
+    """
+    Ensemble-based disease detection (EfficientNet-B0 + ResNet-50 + EfficientNet-B1).
+
+    Output JSON (v3.1)
+    -------------------
+    {
+        "prediction":            str,
+        "confidence":            float,
+        "heatmap":               str  (base64 JPEG),
+        "heatmap_url":           str,
+        "is_unknown":            bool,
+        "unknown_reason":        str,
+        "used_ensemble":         bool,
+        "early_exit_triggered":  bool,
+        "ensemble_weights":      dict,
+        "model_confidences":     {"EfficientNet-B0": float, ...},
+        "disagreement_detected": bool,
+        "entropy":               float,
+        "top_predictions":       [{"label": str, "confidence": float}, ...]
+    }
+    """
+    log_request("/detect-disease", {"filename": file.filename})
+
+    try:
+        ext = os.path.splitext(file.filename or "")[1].lower()
+        if ext not in VALID_IMAGE_EXTENSIONS:
+            raise HTTPException(
+                status_code=400,
+                detail={"status": "error", "message": "Invalid image. Supported: jpg, jpeg, png, bmp, tiff, webp"}
+            )
+
+        temp_dir  = os.path.join(PROJECT_ROOT, "tmp")
+        os.makedirs(temp_dir, exist_ok=True)
+        safe_name = f"ensemble_{datetime.now().strftime('%H%M%S%f')}{ext}"
+        file_path = os.path.join(temp_dir, safe_name)
+
+        try:
+            with open(file_path, "wb") as buf:
+                shutil.copyfileobj(file.file, buf)
+
+            # ── OPTION A: Full pipeline (Ensemble + Grad-CAM) ─
+            if plant_doctor_pipeline is not None:
+                diagnosis = plant_doctor_pipeline.diagnose(file_path, top_k=5)
+
+                heatmap_b64  = ""
+                heatmap_url  = ""
+                heatmap_path = diagnosis.get("heatmap_path", "")
+                if heatmap_path and os.path.isfile(heatmap_path):
+                    try:
+                        import base64
+                        with open(heatmap_path, "rb") as hf:
+                            heatmap_b64 = base64.b64encode(hf.read()).decode("utf-8")
+                        cleanup_outputs(max_files=20)
+                        heatmap_url = (
+                            f"{str(request.base_url).rstrip('/')}"
+                            f"/outputs/{os.path.basename(heatmap_path)}"
+                        )
+                    except Exception as b64_err:
+                        log_error(f"Heatmap base64 failed: {b64_err}")
+
+                em = diagnosis.get("ensemble_meta", {})
+                is_unknown = em.get("is_unknown", diagnosis.get("status") == "Unknown")
+                pred_str   = (
+                    "Unknown Disease"
+                    if is_unknown
+                    else f"{diagnosis['plant']} - {diagnosis['disease']}"
+                )
+
+                log_prediction(
+                    "DETECT-DISEASE",
+                    f"{pred_str} ({diagnosis['confidence']:.1f}%) "
+                    f"ensemble={em.get('used_ensemble')} "
+                    f"early_exit={em.get('early_exit_triggered')} "
+                    f"unknown={is_unknown} "
+                    f"disagreement={em.get('disagreement_detected')} "
+                    f"entropy={em.get('entropy', 0):.3f}"
+                )
+
+                # v3.1 top_predictions: prefer list-of-dicts, fall back to tuples
+                raw_top = em.get("top_predictions_dict") or []
+                if raw_top:
+                    top_out = [
+                        {"label": d["label"], "confidence": d["confidence_pct"]}
+                        for d in raw_top[:5]
+                    ]
+                else:
+                    top_out = [
+                        {"label": name, "confidence": round(conf, 1)}
+                        for name, conf in diagnosis.get("top_predictions", [])[:5]
+                    ]
+
+                return {
+                    "status":                "success",
+                    "prediction":            pred_str,
+                    "confidence":            round(diagnosis["confidence"], 2),
+                    "heatmap":               heatmap_b64,
+                    "heatmap_url":           heatmap_url,
+                    # open-set
+                    "is_unknown":            is_unknown,
+                    "unknown_detected":      is_unknown,
+                    "unknown_reason":        em.get("unknown_reason", ""),
+                    # ensemble meta
+                    "used_ensemble":         em.get("used_ensemble", False),
+                    "early_exit_triggered":  em.get("early_exit_triggered", False),
+                    "ensemble_weights":      em.get("ensemble_weights", {}),
+                    # quality signals
+                    "model_confidences":     em.get("model_confidences", {}),
+                    "disagreement_detected": em.get("disagreement_detected", False),
+                    "entropy":               em.get("entropy", 0.0),
+                    # predictions
+                    "top_predictions":       top_out,
+                    "plant":                 diagnosis.get("plant", "Unknown"),
+                    "disease":               diagnosis.get("disease", "Unknown"),
+                    "severity":              diagnosis.get("severity", {}),
+                }
+
+            # ── OPTION B: Ensemble only (no Grad-CAM) ─────────
+            elif ensemble_engine is not None:
+                result = ensemble_engine.predict(file_path, top_k=5)
+                if not result.get("success"):
+                    error_response(result.get("error", "Ensemble prediction failed"))
+
+                top_out = [
+                    {"label": d["label"], "confidence": d["confidence_pct"]}
+                    for d in result.get("top_predictions", [])[:5]
+                ]
+                log_prediction(
+                    "DETECT-DISEASE",
+                    f"{result['prediction']} ({result['confidence']:.1f}%) "
+                    f"ensemble={result.get('used_ensemble')} "
+                    f"unknown={result.get('is_unknown')}"
+                )
+                return {
+                    "status":                "success",
+                    "prediction":            result["prediction"],
+                    "confidence":            round(result["confidence"], 2),
+                    "heatmap":               "",
+                    "heatmap_url":           "",
+                    "is_unknown":            result.get("is_unknown", False),
+                    "unknown_detected":      result.get("unknown_detected", False),
+                    "unknown_reason":        result.get("unknown_reason", ""),
+                    "used_ensemble":         result.get("used_ensemble", False),
+                    "early_exit_triggered":  result.get("early_exit_triggered", False),
+                    "ensemble_weights":      result.get("ensemble_weights", {}),
+                    "model_confidences":     result.get("model_confidences", {}),
+                    "disagreement_detected": result.get("disagreement_detected", False),
+                    "entropy":               result.get("entropy", 0.0),
+                    "top_predictions":       top_out,
+                }
+
+            # ── OPTION C: Single B0 fallback ───────────────────
+            elif _disease_loaded and disease_engine is not None:
+                result = disease_engine.predict(file_path, top_k=5)
+                if not result.get("success"):
+                    error_response(result.get("error", "Disease prediction failed"))
+                top_out = [
+                    {"label": name, "confidence": round(conf, 1)}
+                    for name, conf in result.get("top_predictions", [])[:5]
+                ]
+                return {
+                    "status":                "success",
+                    "prediction":            result["disease_name"],
+                    "confidence":            round(result["confidence"], 2),
+                    "heatmap":               "",
+                    "heatmap_url":           "",
+                    "is_unknown":            result["confidence"] < 70.0,
+                    "unknown_detected":      result["confidence"] < 70.0,
+                    "unknown_reason":        "low_confidence(single_model)" if result["confidence"] < 70.0 else "",
+                    "used_ensemble":         False,
+                    "early_exit_triggered":  False,
+                    "ensemble_weights":      {},
+                    "model_confidences":     {"efficientnet_b0": round(result["confidence"], 2)},
+                    "disagreement_detected": False,
+                    "entropy":               0.0,
+                    "top_predictions":       top_out,
+                }
+            else:
+                error_response("No disease models are loaded", 503)
+
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_response(f"Detect-disease exception: {e}")
+
+
+# ══════════════════════════════════════════════════════════════
+# ENSEMBLE WEIGHT MANAGEMENT ENDPOINTS
+# ══════════════════════════════════════════════════════════════
+
+@app.get("/ensemble-weights")
+async def get_ensemble_weights():
+    """
+    Return current ensemble model weights.
+
+    Response
+    --------
+    {
+        "weights": {"efficientnet_b0": 0.4, "resnet50": 0.3, "efficientnet_b1": 0.3},
+        "ensemble_loaded": bool
+    }
+    """
+    if ensemble_engine is None:
+        return {"weights": {}, "ensemble_loaded": False}
+    return {"weights": ensemble_engine.weights, "ensemble_loaded": _ensemble_loaded}
+
+
+@app.post("/ensemble-weights")
+async def update_ensemble_weights(payload: dict):
+    """
+    Dynamically update ensemble weights at runtime.
+
+    Accepts two modes:
+
+    Mode 1 — Direct weights:
+        { "weights": {"efficientnet_b0": 0.5, "resnet50": 0.25, "efficientnet_b1": 0.25} }
+
+    Mode 2 — Accuracy-based (auto-normalized):
+        { "accuracies": {"efficientnet_b0": 0.946, "resnet50": 0.921, "efficientnet_b1": 0.934} }
+
+    Response
+    --------
+    { "status": "updated", "new_weights": { ... } }
+    """
+    if ensemble_engine is None:
+        raise HTTPException(status_code=503, detail="Ensemble engine not loaded.")
+
+    try:
+        from smart_system.ensemble_engine import compute_weights_from_accuracy
+
+        if "accuracies" in payload:
+            accs = payload["accuracies"]
+            if not isinstance(accs, dict) or len(accs) == 0:
+                raise HTTPException(status_code=422, detail="'accuracies' must be a non-empty dict.")
+            ensemble_engine.set_weights_from_accuracy(accs)
+            log_info(f"Ensemble weights updated from accuracies: {accs}")
+
+        elif "weights" in payload:
+            w = payload["weights"]
+            if not isinstance(w, dict) or len(w) == 0:
+                raise HTTPException(status_code=422, detail="'weights' must be a non-empty dict.")
+            ensemble_engine.set_weights(w)
+            log_info(f"Ensemble weights manually updated: {w}")
+
+        else:
+            raise HTTPException(
+                status_code=422,
+                detail="Payload must contain 'weights' or 'accuracies' key."
+            )
+
+        return {"status": "updated", "new_weights": ensemble_engine.weights}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_response(f"Weight update failed: {e}")
 
 
 @app.post("/predict-crop")

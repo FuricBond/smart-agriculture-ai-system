@@ -1,15 +1,16 @@
 """
 Plant Doctor — AI Plant Disease Detection & Decision Support
 ================================================================
-Modular post-processing pipeline that wraps the existing
-EfficientNet disease model with advanced features:
+Modular post-processing pipeline that wraps the ensemble disease model
+with advanced features:
 
   • Image quality assessment (blur, brightness)
+  • Ensemble inference (EfficientNet-B0 + ResNet-50 + EfficientNet-B1)
   • Confidence calibration (temperature scaling + soft cap)
-  • Grad-CAM disease localization & heatmap generation
+  • Grad-CAM disease localization from EfficientNet-B0 only
   • Severity estimation from Grad-CAM masks
   • Risk level assessment (Low / Moderate / High)
-  • Open-world unknown disease detection
+  • Open-world unknown disease detection (ensemble probability threshold)
   • Explanation engine (why the disease occurred)
   • Treatment recommendations (what to do)
   • FAISS-based disease similarity search
@@ -17,15 +18,15 @@ EfficientNet disease model with advanced features:
   • Global plant + disease label parsing
   • Display formatting (frontend-ready output)
 
-Architecture (v2.0)
---------------------
+Architecture (v3.0 Ensemble)
+------------------------------
   Input Image
     -> Image Quality Check
-    -> Core Model (EfficientNet)
+    -> Ensemble Inference (EfficientNet-B0 + ResNet-50 + EfficientNet-B1)
     -> Confidence Calibration
     -> Top-K + Confidence
-    -> Open-World Detection
-    -> Grad-CAM
+    -> Open-World Detection (ensemble probability threshold)
+    -> Grad-CAM (EfficientNet-B0 ONLY)
     -> Severity Estimation
     -> Risk Assessment
     -> Explanation Engine
@@ -35,7 +36,7 @@ Architecture (v2.0)
     -> Final Structured Output
 
 Author  : Smart Agriculture AI Team
-Version : 2.0.0
+Version : 3.0.0
 """
 
 from .pipeline import PlantDoctorPipeline
@@ -51,9 +52,11 @@ from .similarity import DiseaseSimilaritySearch
 from .label_parser import LabelParser
 from .display_formatter import DisplayFormatter
 from .final_output_enhancer import FinalOutputEnhancer
+from .ensemble_predictor import EnsemblePredictor
 
 __all__ = [
     "PlantDoctorPipeline",
+    "EnsemblePredictor",
     "ImageQualityChecker",
     "ConfidenceCalibrator",
     "GradCAMGenerator",

@@ -14,6 +14,12 @@ Version : 2.0.0
 """
 
 import sys
+import io
+
+if isinstance(sys.stdout, io.TextIOWrapper):
+    sys.stdout.reconfigure(encoding='utf-8')
+if isinstance(sys.stderr, io.TextIOWrapper):
+    sys.stderr.reconfigure(encoding='utf-8')
 
 
 def _main() -> None:

@@ -1,15 +1,5 @@
 import os
-import google.generativeai as genai
-
-# Setup Gemini API key
-api_key = os.getenv("GEMINI_API_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
-
-# We use gemini-pro for text tasks
-# In newer versions of the SDK, gemini-1.5-pro or gemini-1.0-pro might be available.
-def get_model():
-    return genai.GenerativeModel('gemini-flash-latest')
+from google import genai
 
 def generate_crop_advice(input_data: dict, prediction: dict) -> str:
     """
@@ -22,11 +12,12 @@ def generate_crop_advice(input_data: dict, prediction: dict) -> str:
     Returns:
         str: The generated advice text, or a fallback message if the API fails or is not configured.
     """
-    if not os.getenv("GEMINI_API_KEY"):
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
         return "AI advice temporarily unavailable. Please configure the GEMINI_API_KEY."
 
     try:
-        model = get_model()
+        client = genai.Client(api_key=api_key)
         
         prompt = f"""
         You are an agricultural expert AI.
@@ -52,10 +43,12 @@ def generate_crop_advice(input_data: dict, prediction: dict) -> str:
         CRITICAL: Provide your answer as exactly 3 very short, concise bullet points. Do not include any introductory or concluding text. Maximum 3 sentences total.
         """
         
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt
+        )
         return response.text.strip()
         
     except Exception as e:
         print(f"Gemini API Error: {e}")
         return "AI advice temporarily unavailable. (Service Error)"
-
