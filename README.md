@@ -75,19 +75,16 @@ The **Smart Agriculture AI System** is a full-stack, AI-powered platform designe
 
 ## 🏗️ System Architecture
 
-The application follows a decoupled, microservices-oriented architecture for scalability and maintainability:
+The application follows a clean, decoupled full-stack architecture designed for high performance and scalability:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    React Frontend (:3000)                    │
-│          (Dashboard, Forms, Charts, Chat Interface)          │
+│      (Dashboard UI, Multi-Language, Interactive Charts)     │
 └──────────────────────────┬──────────────────────────────────┘
-                           │ HTTP / REST
-┌──────────────────────────▼──────────────────────────────────┐
-│                  Node.js Backend (:5000)                     │
-│         (Proxy Gateway, File Uploads, Routing Layer)         │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ HTTP / REST
+                           │ 
+                           │ HTTP / REST (JSON & FormData)
+                           │ 
 ┌──────────────────────────▼──────────────────────────────────┐
 │               Python FastAPI ML Server (:8000)               │
 │      (Model Inference, Gemini Integration, Validation)       │
@@ -98,11 +95,12 @@ The application follows a decoupled, microservices-oriented architecture for sca
 ```
 
 **Data Flow:**
-1. User inputs data (leaf image / soil values / area info) via the **React Dashboard**
-2. The **Node.js server** validates and proxies the request securely
-3. The **FastAPI ML server** runs inference through the appropriate engine in `smart_system/`
-4. Results are augmented with **Gemini LLM** advisory text
-5. The full response is returned and visualized on the dashboard
+1. User inputs farm data (leaf image / soil values / area details) via the **React Dashboard**
+2. The dashboard makes direct REST API requests to the **FastAPI ML Server**
+3. The server validates incoming payloads and routes requests to the appropriate engine in `smart_system/`
+4. Core machine learning predictions are augmented with **Google Gemini LLM** advisory recommendations
+5. The unified JSON response (with Grad-CAM heatmaps, top recommendations, and risks) is returned and rendered on the dashboard
+
 
 ---
 
@@ -159,6 +157,8 @@ CropProject/
 │   └── package.json            #    Frontend dependencies
 │
 ├── documentation/              # 📄 Academic & technical documentation
+│   ├── ABOUT.md                #    Detailed project goals, architecture & ML details
+│   └── WORKING_OF_THE_PROJECT.md #  Detailed technical explanation of system pipeline
 ├── logs/                       # 🪵 Runtime system logs
 ├── reports/                    # 📑 Generated analytical reports
 ├── requirements.txt            # Python dependency manifest
@@ -181,14 +181,7 @@ CropProject/
 | Lucide React | — | Icon system |
 | Axios | — | HTTP client |
 
-### 🔧 Backend (Proxy)
-| Technology | Purpose |
-|---|---|
-| Node.js | Runtime environment |
-| Express.js | REST API framework |
-| Multer | Multipart file upload handling |
-
-### 🤖 AI / Machine Learning
+### 🤖 AI / Machine Learning (FastAPI Backend)
 | Technology | Version | Purpose |
 |---|---|---|
 | Python | 3.10+ | Core language |
@@ -203,6 +196,7 @@ CropProject/
 | FAISS | ≥ 1.7 | Similarity search |
 | OpenCV | ≥ 4.8 | Image preprocessing |
 | Pandas / NumPy | — | Data manipulation |
+
 
 ---
 
@@ -272,18 +266,7 @@ uvicorn api:app --reload --port 8000
 
 ---
 
-### Step 4 — Start the Node.js Backend Server
-```bash
-# Open a new terminal at project root
-cd backend
-npm install
-npm run dev
-```
-✅ The backend proxy will run at **`http://localhost:5000`**
-
----
-
-### Step 5 — Start the React Frontend Dashboard
+### Step 4 — Start the React Frontend Dashboard
 ```bash
 # Open a new terminal at project root
 cd frontend
@@ -291,6 +274,7 @@ npm install
 npm start
 ```
 ✅ The dashboard will open automatically at **`http://localhost:3000`**
+
 
 ---
 
@@ -322,7 +306,89 @@ Navigate to the **AI Assistant** tab.
 
 ---
 
+## 🔌 API Endpoints Reference
+
+The FastAPI server provides several production-grade endpoints for prediction, chat, and utility functions:
+
+### 1. 🏥 System Health check
+- **Endpoint:** `GET /health`
+- **Description:** Verifies running state and loading status of all models.
+- **Response:**
+  ```json
+  {
+    "status": "running",
+    "disease_model": true,
+    "ensemble_models": true,
+    "crop_model": true,
+    "yield_model": true,
+    "timestamp": "2026-05-29T16:17:55"
+  }
+  ```
+
+### 2. 🔬 Disease Diagnosis (Ensemble + Grad-CAM)
+- **Endpoint:** `POST /detect-disease`
+- **Request Type:** `multipart/form-data`
+- **Payload:** File input named `file` (image).
+- **Description:** Diagnoses plant leaf diseases using a soft-voting ensemble (EfficientNet-B0, ResNet-50, EfficientNet-B1) and overlays a Grad-CAM attention heatmap.
+
+### 3. 🌱 Crop Recommendation
+- **Endpoint:** `POST /predict-crop`
+- **Request Type:** `application/json`
+- **Payload:**
+  ```json
+  {
+    "Nitrogen": 90.0,
+    "Phosphorus": 42.0,
+    "Potassium": 43.0,
+    "Temperature": 20.87,
+    "Humidity": 82.00,
+    "pH": 6.5,
+    "Rainfall": 202.93
+  }
+  ```
+- **Description:** Recommends the top 3 most suitable crops based on soil nutrients and climate conditions.
+
+### 4. 📈 Yield Prediction & Intelligence
+- **Endpoint:** `POST /predict-yield-v2/full`
+- **Request Type:** `application/json`
+- **Payload:**
+  ```json
+  {
+    "crop": "Rice",
+    "state": "Uttar Pradesh",
+    "season": "Kharif",
+    "year": 2024
+  }
+  ```
+- **Description:** Predicts expected crop yield in hg/ha and returns a Gemini-generated risk assessment and agricultural suggestions.
+
+### 5. 💬 Farm AI Assistant
+- **Endpoint:** `POST /farm-assistant`
+- **Request Type:** `application/json`
+- **Payload:**
+  ```json
+  {
+    "question": "What is the best fertilizer timing for wheat?"
+  }
+  ```
+- **Description:** Real-time conversational AI chatbot expert for agronomy and crop management queries.
+
+### 6. 📊 Yield Trends
+- **Endpoint:** `POST /yield-trends`
+- **Request Type:** `application/json`
+- **Payload:**
+  ```json
+  {
+    "Area": "India",
+    "Crop": "Wheat"
+  }
+  ```
+- **Description:** Returns historical yield records to plot trends on the frontend dashboard.
+
+---
+
 ## 👨‍💻 Team Contributions
+
 
 This project was developed collaboratively by a five-member team, with each member owning one complete module from data preparation through integration.
 
