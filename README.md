@@ -158,7 +158,8 @@ CropProject/
 │
 ├── documentation/              # 📄 Academic & technical documentation
 │   ├── ABOUT.md                #    Detailed project goals, architecture & ML details
-│   └── WORKING_OF_THE_PROJECT.md #  Detailed technical explanation of system pipeline
+│   ├── WORKING_OF_THE_PROJECT.md #  Detailed technical explanation of system pipeline
+│   └── WORKING_OF_THE_PROJECT.docx # MS Word formatted project report documentation
 ├── logs/                       # 🪵 Runtime system logs
 ├── reports/                    # 📑 Generated analytical reports
 ├── requirements.txt            # Python dependency manifest
